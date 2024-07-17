@@ -10,7 +10,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl.auto: create
+#        hbm2ddl.auto: create
 
 datasource:
   db:
