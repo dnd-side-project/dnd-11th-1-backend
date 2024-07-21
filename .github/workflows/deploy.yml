@@ -3,8 +3,7 @@ name: deploy to cloud
 on:
   push:
     branches:
-      - dev
-      - setting/**
+      - main
 
 # 권한 설정
 permissions:
