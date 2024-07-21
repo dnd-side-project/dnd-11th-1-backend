@@ -1,0 +1,3 @@
+[submodule "accompany-submodule"]
+	path = accompany-submodule
+	url = git@github.com:rlarltj/accompany-submodule.git
