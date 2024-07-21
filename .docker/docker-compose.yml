@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    container_name: accompany-db
+    image: mysql
+    environment:
+      MYSQL_DATABASE: accompany
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      TZ: Asia/Seoul
+    ports:
+      - ${DOCKER_DB_PORT}
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    restart: always
+
+  server:
+    container_name: server
+    image: ${DOCKER_IMAGE_NAME}
+    ports:
+      - ${DOCKER_SERVER_PORT}
