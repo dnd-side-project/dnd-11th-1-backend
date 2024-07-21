@@ -42,3 +42,10 @@ datasource:
       autoReconnectForPools: true
       usePipelineAuth: false
       useBatchMultiSend: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: env, beans
