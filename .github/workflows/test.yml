@@ -11,7 +11,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Make application.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application-local.yml
+
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
