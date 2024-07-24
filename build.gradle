@@ -87,3 +87,7 @@ tasks.withType(JavaCompile).configureEach {
 bootJar {
     dependsOn 'copySecret'
 }
+
+build {
+    dependsOn 'copySecret'
+}
