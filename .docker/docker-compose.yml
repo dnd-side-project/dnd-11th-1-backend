@@ -19,3 +19,5 @@ services:
     image: ${DOCKER_IMAGE_NAME}
     ports:
       - ${DOCKER_SERVER_PORT}
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
