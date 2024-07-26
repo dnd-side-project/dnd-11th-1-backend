@@ -1,9 +1,8 @@
 package com.dnd.accompany.domain.user.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SoftDelete;
 
-import com.dnd.accompany.domain.common.entity.BaseEntity;
+import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,11 +20,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
+@SoftDelete
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted = false")
-@SQLDelete(sql = "UPDATE users SET deleted = true where id=?")
-public class User extends BaseEntity {
+public class User extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
