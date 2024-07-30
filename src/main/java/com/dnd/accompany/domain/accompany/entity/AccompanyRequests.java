@@ -2,12 +2,17 @@ package com.dnd.accompany.domain.accompany.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.SoftDelete;
 
 import com.dnd.accompany.domain.user.entity.User;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,12 +36,14 @@ public class AccompanyRequests {
 	@Column(name = "accompany_requests_id")
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "accompany_board_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "accompany_board_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private AccompanyBoard accompanyBoard;
 
 	@Column(nullable = false)
