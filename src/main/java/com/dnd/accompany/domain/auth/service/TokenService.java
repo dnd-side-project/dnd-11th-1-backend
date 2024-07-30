@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
 import com.dnd.accompany.domain.auth.dto.Tokens;
 import com.dnd.accompany.domain.auth.entity.RefreshToken;
 import com.dnd.accompany.domain.auth.exception.ExpiredTokenException;
@@ -25,7 +26,9 @@ public class TokenService {
 	@Value("${jwt.expiry-seconds.refresh-token}")
 	private long refreshTokenExpireSeconds;
 
-	public Tokens createTokens(Long userId) {
+	public Tokens createTokens(AuthUserInfo authUserInfo) {
+		Long userId = authUserInfo.getUserId();
+
 		String accessToken = createAccessToken(userId);
 		String refreshToken = createRefreshToken(userId);
 
