@@ -57,7 +57,10 @@ public class TokenService {
 
 		validateExpiration(token);
 
-		if (token.getExpiredAt() < System.currentTimeMillis() + ONE_WEEK_IN_MILLI_SECONDS) {
+		long oneWeekFromNow = System.currentTimeMillis() + ONE_WEEK_IN_MILLI_SECONDS;
+		boolean isExpiringSoon = token.getExpiredAt() < oneWeekFromNow;
+
+		if (isExpiringSoon) {
 			String renewalRefreshToken = UUID.randomUUID().toString();
 			token.renew(renewalRefreshToken, refreshTokenExpireSeconds);
 

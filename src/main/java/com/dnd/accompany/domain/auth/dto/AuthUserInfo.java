@@ -4,6 +4,9 @@ import org.springframework.util.Assert;
 
 import lombok.Getter;
 
+/**
+ * TokenService로 UserId를 담아 전달하는 dto입니다.
+ */
 @Getter
 public class AuthUserInfo {
 	private final Long userId;
