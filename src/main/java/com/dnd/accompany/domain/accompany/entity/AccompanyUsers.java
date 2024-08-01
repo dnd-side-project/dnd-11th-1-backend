@@ -1,8 +1,7 @@
 package com.dnd.accompany.domain.accompany.entity;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.user.entity.User;
 
@@ -16,6 +15,7 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,8 +27,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SoftDelete
-@Table(name = "accompany_users")
+@Table(name = "accompany_users", indexes = {
+	@Index(name = "IX_user_id", columnList = "user_id"),
+	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
+})
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
 public class AccompanyUsers {
 
 	@Id
@@ -37,28 +41,26 @@ public class AccompanyUsers {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
-	@JoinColumn(name = "accompany_board_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private AccompanyBoard accompanyBoard;
+	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private AccompanyBoards accompanyBoards;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
 
-	public enum Role {
-		HOST, APPLICANT, PARTICIPANT
-	}
-
 	@Builder
-	public AccompanyUsers(Long id, User user, AccompanyBoard accompanyBoard, Role role) {
+	public AccompanyUsers(Long id, User user, AccompanyBoards accompanyBoards, Role role) {
 		this.id = id;
 		this.user = user;
-		this.accompanyBoard = accompanyBoard;
+		this.accompanyBoards = accompanyBoards;
 		this.role = role;
+	}
+
+	public enum Role {
+		HOST, APPLICANT, PARTICIPANT
 	}
 }

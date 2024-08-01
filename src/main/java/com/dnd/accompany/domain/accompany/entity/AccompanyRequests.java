@@ -1,21 +1,22 @@
 package com.dnd.accompany.domain.accompany.entity;
 
-import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.SoftDelete;
-
+import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 import com.dnd.accompany.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,9 +28,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SoftDelete
-@Table(name = "accompany_requests")
-public class AccompanyRequests {
+@Table(name = "accompany_requests", indexes = {
+	@Index(name = "IX_user_id", columnList = "user_id"),
+	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
+})
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+public class AccompanyRequests extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,26 +42,25 @@ public class AccompanyRequests {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
-	@JoinColumn(name = "accompany_board_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private AccompanyBoard accompanyBoard;
+	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private AccompanyBoards accompanyBoards;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private LocalDateTime applicationDate;
-	private LocalDateTime approvedDate;
+	private RequestState requestState;
 
 	@Builder
-	public AccompanyRequests(Long id, User user, AccompanyBoard accompanyBoard, LocalDateTime applicationDate,
-		LocalDateTime approvedDate) {
+	public AccompanyRequests(Long id, User user, AccompanyBoards accompanyBoards) {
 		this.id = id;
 		this.user = user;
-		this.accompanyBoard = accompanyBoard;
-		this.applicationDate = applicationDate;
-		this.approvedDate = approvedDate;
+		this.accompanyBoards = accompanyBoards;
+	}
+
+	public enum RequestState {
+		APPROVE, HOLDING, DECLINED
 	}
 }
