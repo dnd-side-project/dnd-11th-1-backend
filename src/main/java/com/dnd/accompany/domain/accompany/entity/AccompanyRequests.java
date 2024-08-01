@@ -54,13 +54,14 @@ public class AccompanyRequests extends TimeBaseEntity {
 	private RequestState requestState;
 
 	@Builder
-	public AccompanyRequests(Long id, User user, AccompanyBoards accompanyBoards) {
+	public AccompanyRequests(Long id, User user, AccompanyBoards accompanyBoards, RequestState requestState) {
 		this.id = id;
 		this.user = user;
 		this.accompanyBoards = accompanyBoards;
+		this.requestState = requestState;
 	}
 
 	public enum RequestState {
-		APPROVE, HOLDING, DECLINED
+		APPROVED, HOLDING, DECLINED
 	}
 }
