@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.dnd.accompany.domain.accompany.api.dto.enums.Category;
+import com.dnd.accompany.domain.accompany.api.dto.enums.PreferredAge;
+import com.dnd.accompany.domain.accompany.api.dto.enums.PreferredGender;
+import com.dnd.accompany.domain.accompany.api.dto.enums.Region;
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
 import jakarta.persistence.Column;
@@ -43,10 +47,7 @@ public class AccompanyBoards extends TimeBaseEntity {
 	private String content;
 
 	@Column(nullable = false)
-	private String region;
-
-	@Column(nullable = false)
-	private String district;
+	private Region region;
 
 	@Column(nullable = false)
 	private LocalDateTime startDate;
@@ -73,15 +74,13 @@ public class AccompanyBoards extends TimeBaseEntity {
 	private PreferredGender preferredGender;
 
 	@Builder
-	public AccompanyBoards(Long id, String title, String content, String region, String district,
-		LocalDateTime startDate,
+	public AccompanyBoards(Long id, String title, String content, Region region, LocalDateTime startDate,
 		LocalDateTime endDate, Long headCount, Long capacity, Category category, PreferredAge preferredAge,
 		PreferredGender preferredGender) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.region = region;
-		this.district = district;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.headCount = headCount;
@@ -89,17 +88,5 @@ public class AccompanyBoards extends TimeBaseEntity {
 		this.category = category;
 		this.preferredAge = preferredAge;
 		this.preferredGender = preferredGender;
-	}
-
-	public enum PreferredAge {
-		SAME, ANY
-	}
-
-	public enum Category {
-		FULL, PART, LODGING, TOUR, MEAL
-	}
-
-	public enum PreferredGender {
-		SAME, ANY
 	}
 }
