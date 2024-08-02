@@ -28,7 +28,7 @@ public class KakaoService implements OAuthAuthenticationHandler {
 
 	private final RestTemplate restTemplate;
 
-	@Value("${spring.security.oauth2.kakao.host}")
+	@Value("${spring.oauth2.kakao.host}")
 	private String host;
 
 	@Override
