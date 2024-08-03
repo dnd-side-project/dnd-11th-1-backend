@@ -28,6 +28,7 @@ public class UserProfile {
 
     private Long userId;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private int birthYear;
