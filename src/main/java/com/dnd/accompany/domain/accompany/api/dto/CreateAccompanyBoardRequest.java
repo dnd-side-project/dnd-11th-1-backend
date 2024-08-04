@@ -3,10 +3,10 @@ package com.dnd.accompany.domain.accompany.api.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.dnd.accompany.domain.accompany.api.dto.enums.Category;
-import com.dnd.accompany.domain.accompany.api.dto.enums.PreferredAge;
-import com.dnd.accompany.domain.accompany.api.dto.enums.PreferredGender;
-import com.dnd.accompany.domain.accompany.api.dto.enums.Region;
+import com.dnd.accompany.domain.accompany.entity.enums.Category;
+import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
+import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
