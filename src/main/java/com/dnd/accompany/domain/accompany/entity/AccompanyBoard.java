@@ -46,6 +46,7 @@ public class AccompanyBoard extends TimeBaseEntity {
 	)
 	private String content;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Region region;
 
