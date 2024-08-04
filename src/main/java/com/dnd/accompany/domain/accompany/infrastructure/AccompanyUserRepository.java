@@ -5,9 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
-import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 
 @Repository
-public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long>, AccompanyBoardRepositoryCustom {
+public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long> {
 	boolean existsByUserIdAndAccompanyBoardIdAndRole(Long userId, Long accompanyBoardId, Role role);
 }
