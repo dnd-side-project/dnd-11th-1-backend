@@ -58,13 +58,12 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.where(accompanyUser.role.eq(HOST))
 			.fetchOne();
 
-		System.out.println("Offset: " + pageable.getOffset());
-		System.out.println("Limit: " + pageable.getPageSize());
-		System.out.println("Fetched content: " + content);
-		System.out.println("Total count: " + total);
-
 		return new PageImpl<>(content, pageable, total);
 	}
+
+	/**
+	 * 동행글, 프로필 정보를 한번에 가져옵니다.
+	 */
 
 	@Override
 	public Optional<ReadAccompanyBoardResponse> findDetailInfo(Long boardId) {
