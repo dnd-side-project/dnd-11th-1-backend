@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_tags", indexes = @Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id"))
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE accompany_tags SET deleted = true WHERE accompany_tags_id = ?")
 public class AccompanyTag {
 
 	@Id
@@ -39,6 +39,8 @@ public class AccompanyTag {
 
 	@Column(nullable = false)
 	private String name;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
 	public AccompanyTag(Long id, AccompanyBoard accompanyBoard, String name) {

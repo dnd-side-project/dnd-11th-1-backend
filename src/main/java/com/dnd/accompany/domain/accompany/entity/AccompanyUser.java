@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE accompany_users SET deleted = true WHERE accompany_users_id = ?")
 public class AccompanyUser {
 
 	@Id
@@ -52,6 +52,8 @@ public class AccompanyUser {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
 	public AccompanyUser(Long id, User user, AccompanyBoard accompanyBoard, Role role) {

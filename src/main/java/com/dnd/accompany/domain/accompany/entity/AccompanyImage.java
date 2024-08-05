@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE accompany_images SET deleted = true WHERE accompany_images_id = ?")
 public class AccompanyImage {
 
 	@Id
@@ -42,6 +42,8 @@ public class AccompanyImage {
 
 	@Column(nullable = false, length = 2000)
 	private String imageUrl;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
 	public AccompanyImage(Long id, AccompanyBoard accompanyBoard, String imageUrl) {

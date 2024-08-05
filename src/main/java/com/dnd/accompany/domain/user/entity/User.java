@@ -46,6 +46,8 @@ public class User extends TimeBaseEntity {
 	)
 	private String oauthId;
 
+	private boolean deleted = Boolean.FALSE;
+
 	public static User of(String email, String nickname, String provider, String oauthId) {
 		return User.builder()
 			.email(email)
