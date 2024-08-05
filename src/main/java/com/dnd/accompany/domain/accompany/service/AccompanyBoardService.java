@@ -73,9 +73,7 @@ public class AccompanyBoardService {
 	public void delete(Long boardId) {
 		Long userId = getCurrentUserId();
 		if (accompanyUserService.isExist(userId, boardId)) {
-			AccompanyBoard board = accompanyBoardRepository.findById(boardId)
-				.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
-			accompanyBoardRepository.delete(board);
+			accompanyBoardRepository.deleteById(boardId);
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
 		}

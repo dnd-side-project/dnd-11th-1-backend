@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
+import static com.dnd.accompany.domain.user.entity.QUser.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,17 +42,26 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				accompanyBoard.region,
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
-				accompanyUser.user.nickname))
+				user.nickname))
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user) // 추가된 부분
 			.where(accompanyUser.role.eq(HOST))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		long total = queryFactory.selectFrom(accompanyUser)
+		long total = queryFactory.select(accompanyUser.count())
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
 			.where(accompanyUser.role.eq(HOST))
-			.fetchCount();
+			.fetchOne();
+
+		System.out.println("Offset: " + pageable.getOffset());
+		System.out.println("Limit: " + pageable.getPageSize());
+		System.out.println("Fetched content: " + content);
+		System.out.println("Total count: " + total);
 
 		return new PageImpl<>(content, pageable, total);
 	}
