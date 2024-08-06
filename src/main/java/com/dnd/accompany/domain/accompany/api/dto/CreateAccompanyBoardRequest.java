@@ -21,7 +21,7 @@ public record CreateAccompanyBoardRequest(
 	@NotNull Category category,
 	@NotNull PreferredAge preferredAge,
 	@NotNull PreferredGender preferredGender,
-	List<@NotNull @Size(max = 10000) String> imageUrls,
-	List<@NotNull @Size(max = 1000) String> tagNames
+	@NotNull @Size(min = 1, max = 5) List<@NotNull @Size(max = 2000) String> imageUrls,
+	@NotNull @Size(min = 1, max = 5) List<@NotNull @Size(max = 255) String> tagNames
 ) {
 }
