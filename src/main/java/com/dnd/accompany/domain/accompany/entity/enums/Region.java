@@ -1,8 +1,5 @@
 package com.dnd.accompany.domain.accompany.entity.enums;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum Region {
 	SEOUL("서울"),
 	GYEONGGI_INCHEON("경기·인천"),
@@ -13,24 +10,9 @@ public enum Region {
 	BUSAN("부산"),
 	JEJU("제주");
 
-	private final String korean;
+	private String description;
 
-	Region(String korean) {
-		this.korean = korean;
-	}
-
-	@JsonValue
-	public String getKorean() {
-		return korean;
-	}
-
-	@JsonCreator
-	public static Region fromKorean(String korean) {
-		for (Region region : Region.values()) {
-			if (region.getKorean().equals(korean)) {
-				return region;
-			}
-		}
-		throw new IllegalArgumentException(korean + "은 지역 목록에 없습니다.");
+	Region(String description) {
+		this.description = description;
 	}
 }
