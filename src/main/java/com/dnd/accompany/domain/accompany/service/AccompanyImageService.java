@@ -1,8 +1,10 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyImage;
@@ -15,13 +17,16 @@ import lombok.RequiredArgsConstructor;
 public class AccompanyImageService {
 	private final AccompanyImageRepository accompanyImageRepository;
 
+	@Transactional
 	public void save(AccompanyBoard accompanyBoard, List<String> imageUrls) {
-		imageUrls.stream()
+		List<AccompanyImage> images = imageUrls.stream()
 			.map(imageUrl -> AccompanyImage.builder()
 				.accompanyBoard(accompanyBoard)
 				.imageUrl(imageUrl)
 				.build())
-			.forEach(accompanyImageRepository::save);
+			.collect(Collectors.toList());
+
+		accompanyImageRepository.saveAll(images);
 	}
 
 }

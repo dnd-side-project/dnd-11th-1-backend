@@ -1,8 +1,10 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyTag;
@@ -15,12 +17,16 @@ import lombok.RequiredArgsConstructor;
 public class AccompanyTagService {
 	private final AccompanyTagRepository accompanyTagRepository;
 
+	@Transactional
 	public void save(AccompanyBoard accompanyBoard, List<String> tagNames) {
-		tagNames.stream()
+		List<AccompanyTag> tags = tagNames.stream()
 			.map(tagName -> AccompanyTag.builder()
 				.accompanyBoard(accompanyBoard)
 				.name(tagName)
 				.build())
-			.forEach(accompanyTagRepository::save);
+			.collect(Collectors.toList());
+
+		accompanyTagRepository.saveAll(tags);
+
 	}
 }	
