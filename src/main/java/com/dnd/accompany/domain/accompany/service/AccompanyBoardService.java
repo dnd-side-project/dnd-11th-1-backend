@@ -3,17 +3,20 @@ package com.dnd.accompany.domain.accompany.service;
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
@@ -57,15 +60,45 @@ public class AccompanyBoardService {
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardInfo> readAll(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<AccompanyBoardInfo> pageResult = accompanyBoardRepository.findBoardInfos(pageable);
+		Slice<AccompanyBoardInfo> sliceResult = accompanyBoardRepository.findBoardInfos(pageable);
 
-		return new PageResponse<>(pageResult.hasNext(), pageResult.getContent());
+		return new PageResponse<>(sliceResult.hasNext(), sliceResult.getContent());
 	}
 
 	@Transactional(readOnly = true)
 	public ReadAccompanyBoardResponse read(Long boardId) {
-		return accompanyBoardRepository.findDetailInfo(boardId)
+		FindDetailInfoResult detailInfo = accompanyBoardRepository.findDetailInfo(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
+
+		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(
+			detailInfo);
+
+		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(
+			detailInfo);
+
+		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
+	}
+
+	private static UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
+		return UserProfileDetailInfo.builder()
+			.nickname(detailInfo.nickname())
+			.build();
+	}
+
+	private static AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(FindDetailInfoResult detailInfo) {
+		return AccompanyBoardDetailInfo.builder()
+			.boardId(detailInfo.boardId())
+			.title(detailInfo.title())
+			.content(detailInfo.content())
+			.region(detailInfo.region())
+			.startDate(detailInfo.startDate())
+			.endDate(detailInfo.endDate())
+			.headCount(detailInfo.headCount())
+			.capacity(detailInfo.capacity())
+			.category(detailInfo.category())
+			.preferredAge(detailInfo.preferredAge())
+			.preferredGender(detailInfo.preferredGender())
+			.build();
 	}
 
 	@Transactional

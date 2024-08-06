@@ -2,14 +2,16 @@ package com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
-import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 
 public interface AccompanyBoardRepositoryCustom {
-	Page<AccompanyBoardInfo> findBoardInfos(Pageable pageable);
+	Slice<AccompanyBoardInfo> findBoardInfos(Pageable pageable);
 
-	Optional<ReadAccompanyBoardResponse> findDetailInfo(Long boardId);
+	Optional<FindDetailInfoResult> findDetailInfo(Long boardId);
+
+	boolean isHostOfBoard(Long userId, Long boardId);
 }
