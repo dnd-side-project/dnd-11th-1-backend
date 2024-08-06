@@ -25,12 +25,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_tags", indexes = @Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id"))
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_tags SET deleted = true WHERE accompany_tags_id = ?")
+@SQLDelete(sql = "UPDATE accompany_tags SET deleted = true WHERE id = ?")
 public class AccompanyTag {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_tags_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -28,12 +28,11 @@ import lombok.NoArgsConstructor;
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_images SET deleted = true WHERE accompany_images_id = ?")
+@SQLDelete(sql = "UPDATE accompany_images SET deleted = true WHERE id = ?")
 public class AccompanyImage {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_images_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -29,12 +29,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_boards")
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_boards SET deleted = true WHERE accompany_boards_id = ?")
+@SQLDelete(sql = "UPDATE accompany_boards SET deleted = true WHERE id = ?")
 public class AccompanyBoard extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_boards_id")
 	private Long id;
 
 	@Column(nullable = false)

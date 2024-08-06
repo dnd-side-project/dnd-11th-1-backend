@@ -22,9 +22,11 @@ import com.dnd.accompany.domain.accompany.service.AccompanyRequestService;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "AccompanyBoard")
 @RestController
 @RequestMapping("api/v1/accompany/boards")
 @RequiredArgsConstructor
