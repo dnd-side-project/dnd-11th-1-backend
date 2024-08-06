@@ -25,8 +25,11 @@ public class AccompanyImageService {
 				.imageUrl(imageUrl)
 				.build())
 			.collect(Collectors.toList());
-
 		accompanyImageRepository.saveAll(images);
 	}
 
+	@Transactional
+	public void deleteByBoardId(Long boardId) {
+		accompanyImageRepository.deleteByAccompanyBoardId(boardId);
+	}
 }

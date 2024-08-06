@@ -33,6 +33,7 @@ public class AccompanyBoardService {
 	private final AccompanyImageService accompanyImageService;
 	private final AccompanyTagService accompanyTagService;
 	private final AccompanyUserService accompanyUserService;
+	private final AccompanyRequestService accompanyRequestService;
 
 	@Transactional
 	public CreateAccompanyBoardResponse create(Long userId, CreateAccompanyBoardRequest request) {
@@ -79,6 +80,19 @@ public class AccompanyBoardService {
 		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
 	}
 
+	@Transactional
+	public void delete(Long userId, Long boardId) {
+		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
+			accompanyBoardRepository.deleteById(boardId);
+			accompanyImageService.deleteByBoardId(boardId);
+			accompanyUserService.deleteByBoardId(userId);
+			accompanyTagService.deleteByBoardId(boardId);
+			accompanyRequestService.deleteByBoardId(boardId);
+		} else {
+			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
+		}
+	}
+
 	private static UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
 		return UserProfileDetailInfo.builder()
 			.nickname(detailInfo.nickname())
@@ -99,14 +113,5 @@ public class AccompanyBoardService {
 			.preferredAge(detailInfo.preferredAge())
 			.preferredGender(detailInfo.preferredGender())
 			.build();
-	}
-
-	@Transactional
-	public void delete(Long userId, Long boardId) {
-		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
-			accompanyBoardRepository.deleteById(boardId);
-		} else {
-			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
-		}
 	}
 }

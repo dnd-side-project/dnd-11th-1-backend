@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
 
 @Repository
-public interface AccompanyRequestRepository
-	extends JpaRepository<AccompanyRequest, Long> {
+public interface AccompanyRequestRepository extends JpaRepository<AccompanyRequest, Long> {
+	void deleteByAccompanyBoardId(Long boardId);
 }

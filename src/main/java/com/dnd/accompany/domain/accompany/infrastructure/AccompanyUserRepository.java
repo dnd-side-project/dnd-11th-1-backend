@@ -7,4 +7,5 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
 
 @Repository
 public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long> {
+	void deleteByAccompanyBoardId(Long boardId);
 }

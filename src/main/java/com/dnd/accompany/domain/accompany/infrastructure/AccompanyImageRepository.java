@@ -7,4 +7,5 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyImage;
 
 @Repository
 public interface AccompanyImageRepository extends JpaRepository<AccompanyImage, Long> {
+	void deleteByAccompanyBoardId(Long boardId);
 }

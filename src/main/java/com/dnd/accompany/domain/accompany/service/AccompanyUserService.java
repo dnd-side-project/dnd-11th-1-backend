@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
@@ -17,6 +18,7 @@ public class AccompanyUserService {
 	private final AccompanyUserRepository accompanyUserRepository;
 	private final AccompanyBoardRepository accompanyBoardRepository;
 
+	@Transactional
 	public void save(Long userId, AccompanyBoard accompanyBoard, Role role) {
 		accompanyUserRepository.save(AccompanyUser.builder()
 			.accompanyBoard(accompanyBoard)
@@ -25,7 +27,13 @@ public class AccompanyUserService {
 			.build());
 	}
 
+	@Transactional(readOnly = true)
 	public boolean isHostOfBoard(Long userId, Long boardId) {
 		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
+	}
+
+	@Transactional
+	public void deleteByBoardId(Long boardId) {
+		accompanyUserRepository.deleteByAccompanyBoardId(boardId);
 	}
 }

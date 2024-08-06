@@ -28,4 +28,9 @@ public class AccompanyRequestService {
 			.chatLink(request.chatLink())
 			.build());
 	}
+
+	@Transactional
+	public void deleteByBoardId(Long boardId) {
+		accompanyRequestRepository.deleteByAccompanyBoardId(boardId);
+	}
 }

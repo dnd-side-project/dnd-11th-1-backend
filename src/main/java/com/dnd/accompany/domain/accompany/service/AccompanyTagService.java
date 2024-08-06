@@ -25,8 +25,11 @@ public class AccompanyTagService {
 				.name(tagName)
 				.build())
 			.collect(Collectors.toList());
-
 		accompanyTagRepository.saveAll(tags);
-
 	}
-}	
+
+	@Transactional
+	public void deleteByBoardId(Long boardId) {
+		accompanyTagRepository.deleteByAccompanyBoardId(boardId);
+	}
+}
