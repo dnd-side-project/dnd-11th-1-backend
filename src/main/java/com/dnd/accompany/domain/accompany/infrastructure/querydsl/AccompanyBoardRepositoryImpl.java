@@ -103,5 +103,17 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		ReadAccompanyBoardResponse response = new ReadAccompanyBoardResponse(detailInfo, profileInfo);
 
 		return Optional.of(response);
+	@Override
+	public boolean isHostOfBoard(Long userId, Long boardId) {
+		Integer fetchCount = queryFactory.selectOne()
+			.from(accompanyUser)
+			.where(
+				accompanyUser.user.id.eq(userId)
+					.and(accompanyUser.accompanyBoard.id.eq(boardId))
+					.and(isHost())
+			)
+			.fetchFirst();
+
+		return fetchCount != null;
 	}
 }

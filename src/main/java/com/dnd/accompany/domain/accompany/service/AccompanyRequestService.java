@@ -5,7 +5,7 @@ import static com.dnd.accompany.domain.accompany.entity.enums.RequestState.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyRequestRequest;
+import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyRequestRepository;

@@ -1,12 +1,11 @@
 package com.dnd.accompany.domain.accompany.service;
 
-import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
-
 import org.springframework.stereotype.Service;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
+import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyUserRepository;
 import com.dnd.accompany.domain.user.entity.User;
 
@@ -26,7 +25,7 @@ public class AccompanyUserService {
 			.build());
 	}
 
-	public boolean isExist(Long userId, Long boardId) {
-		return accompanyUserRepository.existsByUserIdAndAccompanyBoardIdAndRole(userId, boardId, HOST);
+	public boolean isHostOfBoard(Long userId, Long boardId) {
+		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
 	}
 }
