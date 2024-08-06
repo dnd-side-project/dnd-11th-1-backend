@@ -85,7 +85,7 @@ public class AccompanyBoardService {
 		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
 			accompanyBoardRepository.deleteById(boardId);
 			accompanyImageService.deleteByBoardId(boardId);
-			accompanyUserService.deleteByBoardId(userId);
+			accompanyUserService.deleteByBoardId(boardId);
 			accompanyTagService.deleteByBoardId(boardId);
 			accompanyRequestService.deleteByBoardId(boardId);
 		} else {
