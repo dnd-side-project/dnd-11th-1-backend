@@ -2,7 +2,6 @@ package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
-import static com.dnd.accompany.global.util.SecurityUtil.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +32,7 @@ public class AccompanyBoardService {
 	private final AccompanyUserService accompanyUserService;
 
 	@Transactional
-	public CreateAccompanyBoardResponse create(CreateAccompanyBoardRequest request) {
+	public CreateAccompanyBoardResponse create(Long userId, CreateAccompanyBoardRequest request) {
 		AccompanyBoard accompanyBoard = accompanyBoardRepository.save(
 			builder()
 				.title(request.title())
@@ -50,7 +49,7 @@ public class AccompanyBoardService {
 		);
 		accompanyImageService.save(accompanyBoard, request.imageUrls());
 		accompanyTagService.save(accompanyBoard, request.tagNames());
-		accompanyUserService.save(accompanyBoard, HOST);
+		accompanyUserService.save(userId, accompanyBoard, HOST);
 
 		return new CreateAccompanyBoardResponse(accompanyBoard.getId());
 	}
@@ -70,9 +69,8 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional
-	public void delete(Long boardId) {
-		Long userId = getCurrentUserId();
-		if (accompanyUserService.isExist(userId, boardId)) {
+	public void delete(Long userId, Long boardId) {
+		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
 			accompanyBoardRepository.deleteById(boardId);
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);

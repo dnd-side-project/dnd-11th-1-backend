@@ -1,7 +1,6 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
-import static com.dnd.accompany.global.util.SecurityUtil.*;
 
 import org.springframework.stereotype.Service;
 
@@ -17,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccompanyUserService {
 	private final AccompanyUserRepository accompanyUserRepository;
+	private final AccompanyBoardRepository accompanyBoardRepository;
 
-	public void save(AccompanyBoard accompanyBoard, Role role) {
-		Long userId = getCurrentUserId();
+	public void save(Long userId, AccompanyBoard accompanyBoard, Role role) {
 		accompanyUserRepository.save(AccompanyUser.builder()
 			.accompanyBoard(accompanyBoard)
 			.user(User.builder().id(userId).build())

@@ -1,7 +1,6 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.entity.enums.RequestState.*;
-import static com.dnd.accompany.global.util.SecurityUtil.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +19,7 @@ public class AccompanyRequestService {
 	private final AccompanyRequestRepository accompanyRequestRepository;
 
 	@Transactional
-	public void save(AccompanyRequestRequest request) {
-		Long userId = getCurrentUserId();
+	public void save(Long userId, CreateAccompanyRequest request) {
 		accompanyRequestRepository.save(AccompanyRequest.builder()
 			.user(User.builder().id(userId).build())
 			.accompanyBoard(AccompanyBoard.builder().id(request.boardId()).build())
