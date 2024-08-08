@@ -10,7 +10,6 @@ import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
@@ -33,7 +32,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public List<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, int limit) {
+	public List<FindBoardThumbnailsResult> findBoardThumbnails() {
 		return queryFactory.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
@@ -45,10 +44,8 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
-			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id)) // LEFT JOIN
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
 			.where(accompanyUser.role.eq(HOST))
-			.offset(pageable.getOffset())
-			.limit(limit)
 			.fetch();
 	}
 

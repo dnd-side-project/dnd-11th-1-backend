@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +26,7 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
+import com.dnd.accompany.domain.accompany.exception.AccompanyBoardOffsetExceededException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
@@ -68,16 +67,20 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		int limit = pageable.getPageSize() * 5; // imageUrls, tagNames 크기 <= 5
+		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails();
+		List<AccompanyBoardThumbnail> allThumbnails = groupByBoard(results);
 
-		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails(pageable, limit);
-		List<AccompanyBoardThumbnail> thumbnails = groupByBoard(results);
+		int dataSize = results.size();
+		int listSize = allThumbnails.size();
+		int offset = page * size;
+		boolean hasNext = dataSize > offset + size;
 
-		boolean hasNext = thumbnails.size() > pageable.getPageSize();
-		if (hasNext) {
-			thumbnails = thumbnails.subList(0, pageable.getPageSize());
+		if (offset >= listSize) {
+			throw new AccompanyBoardOffsetExceededException(ErrorCode.ACCOMPANY_BOARD_OFFSET_EXCEEDED);
 		}
+
+		List<AccompanyBoardThumbnail> thumbnails = allThumbnails.subList(offset,
+			Math.min(offset + size, listSize));
 
 		return new PageResponse<>(hasNext, thumbnails);
 	}
