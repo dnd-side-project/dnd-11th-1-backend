@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
@@ -45,7 +45,7 @@ public class AccompanyBoardController {
 
 	@Operation(summary = "동행글 목록 조회")
 	@GetMapping
-	public ResponseEntity<PageResponse<AccompanyBoardInfo>> readAll(
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "size", defaultValue = "10") int size) {
 		return ResponseEntity.ok(accompanyBoardService.readAll(page, size));
