@@ -72,6 +72,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				accompanyBoard.preferredGender,
 				user.nickname,
 				user.provider,
+				userProfile.birthYear,
 				userProfile.gender,
 				userProfile.travelPreferences,
 				userProfile.travelStyles,

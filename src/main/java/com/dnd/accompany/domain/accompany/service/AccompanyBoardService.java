@@ -111,6 +111,7 @@ public class AccompanyBoardService {
 		return UserProfileDetailInfo.builder()
 			.nickname(detailInfo.nickname())
 			.provider(detailInfo.provider())
+			.birthYear(detailInfo.birthYear())
 			.gender(detailInfo.gender())
 			.travelPreferences(detailInfo.travelPreferences())
 			.travelStyles(detailInfo.travelStyles())
