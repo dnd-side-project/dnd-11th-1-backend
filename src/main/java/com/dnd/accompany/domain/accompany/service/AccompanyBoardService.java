@@ -97,11 +97,11 @@ public class AccompanyBoardService {
 	@Transactional
 	public void delete(Long userId, Long boardId) {
 		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
-			accompanyBoardRepository.deleteById(boardId);
 			accompanyImageService.deleteByBoardId(boardId);
-			accompanyUserService.deleteByBoardId(boardId);
 			accompanyTagService.deleteByBoardId(boardId);
 			accompanyRequestService.deleteByBoardId(boardId);
+			accompanyUserService.deleteByBoardId(boardId);
+			accompanyBoardRepository.deleteById(boardId);
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
 		}
