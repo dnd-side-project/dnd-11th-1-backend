@@ -1,15 +1,15 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 
 public interface AccompanyBoardRepositoryCustom {
-	Slice<AccompanyBoardInfo> findBoardInfos(Pageable pageable);
+	List<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, int limit);
 
 	Optional<FindDetailInfoResult> findDetailInfo(Long boardId);
 

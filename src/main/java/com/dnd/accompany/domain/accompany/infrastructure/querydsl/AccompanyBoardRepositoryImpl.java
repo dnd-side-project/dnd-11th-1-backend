@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
+import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
@@ -10,11 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.types.Projections;
@@ -34,29 +33,23 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public Slice<AccompanyBoardInfo> findBoardInfos(Pageable pageable) {
-		List<AccompanyBoardInfo> content = queryFactory.select(Projections.constructor(AccompanyBoardInfo.class,
+	public List<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, int limit) {
+		return queryFactory.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
 				accompanyBoard.region,
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
-				user.nickname))
+				user.nickname,
+				accompanyImage.imageUrl))
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id)) // LEFT JOIN
 			.where(accompanyUser.role.eq(HOST))
 			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1) // 한 페이지에 하나 더 가져와서 hasNext 체크에 사용
+			.limit(limit)
 			.fetch();
-
-		boolean hasNext = false;
-		if (content.size() > pageable.getPageSize()) {
-			content.remove(pageable.getPageSize());
-			hasNext = true;
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
 	/**
@@ -84,10 +77,10 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				userProfile.travelStyles,
 				userProfile.foodPreferences))
 			.from(accompanyBoard)
-			.leftJoin(accompanyUser).on(accompanyUser.accompanyBoard.id.eq(accompanyBoard.id)
+			.join(accompanyUser).on(accompanyUser.accompanyBoard.id.eq(accompanyBoard.id)
 				.and(isHost()))
-			.leftJoin(user).on(user.id.eq(accompanyUser.user.id))
-			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
+			.join(user).on(user.id.eq(accompanyUser.user.id))
+			.join(userProfile).on(userProfile.userId.eq(user.id))
 			.where(accompanyBoard.id.eq(boardId))
 			.fetchOne();
 

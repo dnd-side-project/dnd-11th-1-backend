@@ -3,21 +3,29 @@ package com.dnd.accompany.domain.accompany.service;
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardDetailInfo;
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
@@ -59,11 +67,19 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<AccompanyBoardInfo> readAll(int page, int size) {
+	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Slice<AccompanyBoardInfo> sliceResult = accompanyBoardRepository.findBoardInfos(pageable);
+		int limit = pageable.getPageSize() * 5; // imageUrls, tagNames 크기 <= 5
 
-		return new PageResponse<>(sliceResult.hasNext(), sliceResult.getContent());
+		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails(pageable, limit);
+		List<AccompanyBoardThumbnail> thumbnails = groupByBoard(results);
+
+		boolean hasNext = thumbnails.size() > pageable.getPageSize();
+		if (hasNext) {
+			thumbnails = thumbnails.subList(0, pageable.getPageSize());
+		}
+
+		return new PageResponse<>(hasNext, thumbnails);
 	}
 
 	@Transactional(readOnly = true)
@@ -71,11 +87,9 @@ public class AccompanyBoardService {
 		FindDetailInfoResult detailInfo = accompanyBoardRepository.findDetailInfo(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 
-		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(
-			detailInfo);
+		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
 
-		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(
-			detailInfo);
+		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(detailInfo);
 
 		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
 	}
@@ -93,7 +107,7 @@ public class AccompanyBoardService {
 		}
 	}
 
-	private static UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
+	private UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
 		return UserProfileDetailInfo.builder()
 			.nickname(detailInfo.nickname())
 			.provider(detailInfo.provider())
@@ -104,7 +118,7 @@ public class AccompanyBoardService {
 			.build();
 	}
 
-	private static AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(FindDetailInfoResult detailInfo) {
+	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(FindDetailInfoResult detailInfo) {
 		return AccompanyBoardDetailInfo.builder()
 			.boardId(detailInfo.boardId())
 			.title(detailInfo.title())
@@ -118,5 +132,40 @@ public class AccompanyBoardService {
 			.preferredAge(detailInfo.preferredAge())
 			.preferredGender(detailInfo.preferredGender())
 			.build();
+	}
+
+	/**
+	 * boardId 중복을 제거해서 AccompanyBoardThumbnail 리스트를 생성합니다.
+	 */
+	private List<AccompanyBoardThumbnail> groupByBoard(List<FindBoardThumbnailsResult> results) {
+		Map<Long, AccompanyBoardThumbnail> boardMap = new HashMap<>();
+
+		results.forEach(dto -> {
+			Long boardId = dto.boardId();
+			String title = dto.title();
+			Region region = dto.region();
+			LocalDateTime startDate = dto.startDate();
+			LocalDateTime endDate = dto.endDate();
+			String nickname = dto.nickname();
+			String imageUrl = dto.imageUrl();
+
+			AccompanyBoardThumbnail thumbnail = boardMap.computeIfAbsent(boardId, key ->
+				AccompanyBoardThumbnail.builder()
+					.boardId(boardId)
+					.title(title)
+					.region(region)
+					.startDate(startDate)
+					.endDate(endDate)
+					.nickname(nickname)
+					.imageUrls(new LinkedList<>())
+					.build()
+			);
+
+			if (imageUrl != null) {
+				thumbnail.getImageUrls().add(imageUrl);
+			}
+		});
+
+		return new ArrayList<>(boardMap.values());
 	}
 }
