@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -28,12 +30,21 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	private final JPAQueryFactory queryFactory;
 
-	public static BooleanExpression isHost() {
+	private BooleanExpression isHost() {
 		return accompanyUser.role.eq(HOST);
 	}
 
+	private BooleanBuilder isRegion(Region region) {
+		BooleanBuilder clause = new BooleanBuilder();
+		if (region != null) {
+			clause.and(accompanyBoard.region.eq(region));
+		}
+
+		return clause;
+	}
+
 	@Override
-	public List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit) {
+	public List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit, Region region) {
 		List<FindBoardThumbnailsResult> results = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -48,6 +59,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.join(accompanyUser.user, user)
 			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
 			.where(isHost())
+			.where(isRegion(region))
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())

@@ -20,6 +20,7 @@ import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
@@ -61,10 +62,10 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size) {
+	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size, Region region) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails(
-			pageable.getOffset(), pageable.getPageSize() + 1);
+			pageable.getOffset(), pageable.getPageSize() + 1, region);
 
 		boolean hasNext = results.size() > pageable.getPageSize();
 		if (hasNext) {

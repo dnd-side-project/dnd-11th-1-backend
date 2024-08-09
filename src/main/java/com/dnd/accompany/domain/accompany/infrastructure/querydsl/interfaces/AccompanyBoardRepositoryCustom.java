@@ -5,9 +5,10 @@ import java.util.Optional;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
 public interface AccompanyBoardRepositoryCustom {
-	List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit);
+	List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit, Region region);
 
 	Optional<FindDetailInfoResult> findDetailInfo(Long boardId);
 

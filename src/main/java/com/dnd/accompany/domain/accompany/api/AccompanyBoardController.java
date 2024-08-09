@@ -17,6 +17,7 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.service.AccompanyBoardService;
 import com.dnd.accompany.domain.accompany.service.AccompanyRequestService;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
@@ -47,8 +48,9 @@ public class AccompanyBoardController {
 	@GetMapping
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
 		@RequestParam(value = "page", defaultValue = "0") int page,
-		@RequestParam(value = "size", defaultValue = "10") int size) {
-		return ResponseEntity.ok(accompanyBoardService.readAll(page, size));
+		@RequestParam(value = "size", defaultValue = "10") int size,
+		@RequestParam(value = "region", required = false) Region region) {
+		return ResponseEntity.ok(accompanyBoardService.readAll(page, size, region));
 	}
 
 	@Operation(summary = "동행글 상세 조회")
