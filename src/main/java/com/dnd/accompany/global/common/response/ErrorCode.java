@@ -32,8 +32,7 @@ public enum ErrorCode {
 
 	// ---- 동행글 ---- //
 	ACCOMPANY_BOARD_NOT_FOUND(MatripConstant.NOT_FOUND, "ACCOMPANY_BOARD-001", "동행글을 찾을 수 없습니다."),
-	ACCOMPANY_BOARD_ACCESS_DENIED(MatripConstant.FORBIDDEN, "ACCOMPANY_BOARD-002", "동행글 접근 권한이 없습니다."),
-	ACCOMPANY_BOARD_OFFSET_EXCEEDED(MatripConstant.BAD_REQUEST, "ACCOMPANY_BOARD-003", "동행글 검색 범위를 초과했습니다.");
+	ACCOMPANY_BOARD_ACCESS_DENIED(MatripConstant.FORBIDDEN, "ACCOMPANY_BOARD-002", "동행글 접근 권한이 없습니다.");
 
 	private final Integer status;
 	private final String code;

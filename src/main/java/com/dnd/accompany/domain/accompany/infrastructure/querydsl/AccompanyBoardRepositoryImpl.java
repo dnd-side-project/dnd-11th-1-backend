@@ -17,6 +17,7 @@ import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -32,21 +33,29 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public List<FindBoardThumbnailsResult> findBoardThumbnails() {
-		return queryFactory.select(Projections.constructor(FindBoardThumbnailsResult.class,
+	public List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit) {
+		List<FindBoardThumbnailsResult> results = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
 				accompanyBoard.region,
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
 				user.nickname,
-				accompanyImage.imageUrl))
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
 			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
-			.where(accompanyUser.role.eq(HOST))
+			.where(isHost())
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
+			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
+			.limit(limit)
+			.offset(offset)
 			.fetch();
+
+		return results;
 	}
 
 	/**
@@ -74,12 +83,12 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				userProfile.travelPreferences,
 				userProfile.travelStyles,
 				userProfile.foodPreferences))
-			.from(accompanyBoard)
-			.join(accompanyUser).on(accompanyUser.accompanyBoard.id.eq(accompanyBoard.id)
-				.and(isHost()))
-			.join(user).on(user.id.eq(accompanyUser.user.id))
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
 			.join(userProfile).on(userProfile.userId.eq(user.id))
 			.where(accompanyBoard.id.eq(boardId))
+			.where(isHost())
 			.fetchOne();
 
 		return Optional.ofNullable(result);

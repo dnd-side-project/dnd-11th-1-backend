@@ -7,7 +7,7 @@ import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 
 public interface AccompanyBoardRepositoryCustom {
-	List<FindBoardThumbnailsResult> findBoardThumbnails();
+	List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit);
 
 	Optional<FindDetailInfoResult> findDetailInfo(Long boardId);
 

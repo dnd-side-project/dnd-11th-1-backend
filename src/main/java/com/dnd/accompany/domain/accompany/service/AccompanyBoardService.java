@@ -3,13 +3,10 @@ package com.dnd.accompany.domain.accompany.service;
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +20,8 @@ import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
-import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
-import com.dnd.accompany.domain.accompany.exception.AccompanyBoardOffsetExceededException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
@@ -67,22 +62,36 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size) {
-		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails();
-		List<AccompanyBoardThumbnail> allThumbnails = groupByBoard(results);
+		Pageable pageable = PageRequest.of(page, size);
+		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails(
+			pageable.getOffset(), pageable.getPageSize() + 1);
 
-		int dataSize = results.size();
-		int listSize = allThumbnails.size();
-		int offset = page * size;
-		boolean hasNext = dataSize > offset + size;
-
-		if (offset >= listSize) {
-			throw new AccompanyBoardOffsetExceededException(ErrorCode.ACCOMPANY_BOARD_OFFSET_EXCEEDED);
+		boolean hasNext = results.size() > pageable.getPageSize();
+		if (hasNext) {
+			results = results.subList(0, pageable.getPageSize());
 		}
 
-		List<AccompanyBoardThumbnail> thumbnails = allThumbnails.subList(offset,
-			Math.min(offset + size, listSize));
+		List<AccompanyBoardThumbnail> thumbnails = getAccompanyBoardThumbnails(results);
 
 		return new PageResponse<>(hasNext, thumbnails);
+	}
+
+	/**
+	 * imageUrls 타입을 String -> list<String>로 변환합니다.
+	 */
+	private static List<AccompanyBoardThumbnail> getAccompanyBoardThumbnails(List<FindBoardThumbnailsResult> results) {
+		List<AccompanyBoardThumbnail> thumbnails = results.stream()
+			.map(result -> AccompanyBoardThumbnail.builder()
+				.boardId(result.boardId())
+				.title(result.title())
+				.region(result.region())
+				.startDate(result.startDate())
+				.endDate(result.endDate())
+				.nickname(result.nickname())
+				.imageUrls(result.getImageUrlsAsList())
+				.build())
+			.toList();
+		return thumbnails;
 	}
 
 	@Transactional(readOnly = true)
@@ -91,7 +100,6 @@ public class AccompanyBoardService {
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 
 		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
-
 		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(detailInfo);
 
 		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
@@ -136,40 +144,5 @@ public class AccompanyBoardService {
 			.preferredAge(detailInfo.preferredAge())
 			.preferredGender(detailInfo.preferredGender())
 			.build();
-	}
-
-	/**
-	 * boardId 중복을 제거해서 AccompanyBoardThumbnail 리스트를 생성합니다.
-	 */
-	private List<AccompanyBoardThumbnail> groupByBoard(List<FindBoardThumbnailsResult> results) {
-		Map<Long, AccompanyBoardThumbnail> boardMap = new HashMap<>();
-
-		results.forEach(dto -> {
-			Long boardId = dto.boardId();
-			String title = dto.title();
-			Region region = dto.region();
-			LocalDateTime startDate = dto.startDate();
-			LocalDateTime endDate = dto.endDate();
-			String nickname = dto.nickname();
-			String imageUrl = dto.imageUrl();
-
-			AccompanyBoardThumbnail thumbnail = boardMap.computeIfAbsent(boardId, key ->
-				AccompanyBoardThumbnail.builder()
-					.boardId(boardId)
-					.title(title)
-					.region(region)
-					.startDate(startDate)
-					.endDate(endDate)
-					.nickname(nickname)
-					.imageUrls(new LinkedList<>())
-					.build()
-			);
-
-			if (imageUrl != null) {
-				thumbnail.getImageUrls().add(imageUrl);
-			}
-		});
-
-		return new ArrayList<>(boardMap.values());
 	}
 }
