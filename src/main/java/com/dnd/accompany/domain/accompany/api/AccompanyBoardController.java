@@ -1,5 +1,8 @@
 package com.dnd.accompany.domain.accompany.api;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,10 +50,11 @@ public class AccompanyBoardController {
 	@Operation(summary = "동행글 목록 조회")
 	@GetMapping
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
-		@RequestParam(value = "page", defaultValue = "0") int page,
-		@RequestParam(value = "size", defaultValue = "10") int size,
+		@PageableDefault(
+			sort = {"updatedAt", "createdAt"},
+			direction = Sort.Direction.DESC) Pageable pageable,
 		@RequestParam(value = "region", required = false) Region region) {
-		return ResponseEntity.ok(accompanyBoardService.readAll(page, size, region));
+		return ResponseEntity.ok(accompanyBoardService.readAll(pageable, region));
 	}
 
 	@Operation(summary = "동행글 상세 조회")

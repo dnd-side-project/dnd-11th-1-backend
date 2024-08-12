@@ -5,8 +5,8 @@ import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,19 +62,12 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<AccompanyBoardThumbnail> readAll(int page, int size, Region region) {
-		Pageable pageable = PageRequest.of(page, size);
-		List<FindBoardThumbnailsResult> results = accompanyBoardRepository.findBoardThumbnails(
-			pageable.getOffset(), pageable.getPageSize() + 1, region);
+	public PageResponse<AccompanyBoardThumbnail> readAll(Pageable pageable, Region region) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(pageable, region);
 
-		boolean hasNext = results.size() > pageable.getPageSize();
-		if (hasNext) {
-			results = results.subList(0, pageable.getPageSize());
-		}
+		List<AccompanyBoardThumbnail> thumbnails = getAccompanyBoardThumbnails(sliceResult.getContent());
 
-		List<AccompanyBoardThumbnail> thumbnails = getAccompanyBoardThumbnails(results);
-
-		return new PageResponse<>(hasNext, thumbnails);
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails);
 	}
 
 	/**

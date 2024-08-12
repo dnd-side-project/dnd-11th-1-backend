@@ -10,6 +10,9 @@ import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
@@ -44,8 +47,8 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public List<FindBoardThumbnailsResult> findBoardThumbnails(long offset, int limit, Region region) {
-		List<FindBoardThumbnailsResult> results = queryFactory
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
+		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
@@ -63,11 +66,17 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
-			.limit(limit)
-			.offset(offset)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize() + 1)
 			.fetch();
 
-		return results;
+		boolean hasNext = content.size() > pageable.getPageSize();
+
+		if (hasNext) {
+			content.remove(content.size() - 1);
+		}
+
+		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
 	/**
