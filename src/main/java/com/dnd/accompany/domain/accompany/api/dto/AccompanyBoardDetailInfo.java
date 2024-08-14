@@ -26,14 +26,14 @@ public class AccompanyBoardDetailInfo {
 	LocalDateTime endDate;
 	Long headCount;
 	Long capacity;
-	Category category;
+	List<Category> categories;
 	PreferredAge preferredAge;
 	PreferredGender preferredGender;
 
 	@Builder
 	public AccompanyBoardDetailInfo(Long boardId, String title, String content, List<String> tagNames,
 		List<String> imageUrls, Region region,
-		LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, Category category,
+		LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, List<Category> categories,
 		PreferredAge preferredAge, PreferredGender preferredGender) {
 		this.boardId = boardId;
 		this.title = title;
@@ -45,7 +45,7 @@ public class AccompanyBoardDetailInfo {
 		this.endDate = endDate;
 		this.headCount = headCount;
 		this.capacity = capacity;
-		this.category = category;
+		this.categories = categories;
 		this.preferredAge = preferredAge;
 		this.preferredGender = preferredGender;
 	}

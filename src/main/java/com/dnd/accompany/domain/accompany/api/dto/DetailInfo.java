@@ -29,7 +29,7 @@ public class DetailInfo {
 	private LocalDateTime endDate;
 	private Long headCount;
 	private Long capacity;
-	private Category category;
+	private List<Category> categories;
 	private PreferredAge preferredAge;
 	private PreferredGender preferredGender;
 	private Long userId;
@@ -40,9 +40,9 @@ public class DetailInfo {
 
 	@Builder
 	public DetailInfo(Long boardId, String title, String content, List<String> tagNames, List<String> imageUrls,
-		Region region, LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, Category category,
-		PreferredAge preferredAge, PreferredGender preferredGender, Long userId, String nickname,
-		String profileImageUrl, int birthYear, Gender gender) {
+		Region region, LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity,
+		List<Category> categories, PreferredAge preferredAge, PreferredGender preferredGender, Long userId,
+		String nickname, String profileImageUrl, int birthYear, Gender gender) {
 		this.boardId = boardId;
 		this.title = title;
 		this.content = content;
@@ -53,7 +53,7 @@ public class DetailInfo {
 		this.endDate = endDate;
 		this.headCount = headCount;
 		this.capacity = capacity;
-		this.category = category;
+		this.categories = categories;
 		this.preferredAge = preferredAge;
 		this.preferredGender = preferredGender;
 		this.userId = userId;

@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
@@ -21,7 +20,6 @@ public record FindDetailInfoResult(
 	LocalDateTime endDate,
 	Long headCount,
 	Long capacity,
-	Category category,
 	PreferredAge preferredAge,
 	PreferredGender preferredGender,
 	Long userId,
@@ -29,6 +27,7 @@ public record FindDetailInfoResult(
 	String profileImageUrl,
 	int birthYear,
 	Gender gender,
+	String categories,
 	String tagNames,
 	String imageUrls
 ) {
