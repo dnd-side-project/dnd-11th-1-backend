@@ -19,7 +19,7 @@ import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
-import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
@@ -72,7 +72,7 @@ public class AccompanyBoardService {
 	}
 
 	/**
-	 * imageUrls 타입을 String -> List<String>로 변환합니다.
+	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
 	private static List<AccompanyBoardThumbnail> getAccompanyBoardThumbnails(List<FindBoardThumbnailsResult> results) {
 		List<AccompanyBoardThumbnail> thumbnails = results.stream()
@@ -97,14 +97,14 @@ public class AccompanyBoardService {
 		DetailInfo detailInfo = getDetailInfo(detailInfoResult);
 
 		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
-		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(detailInfo);
+		UserProfileThumbnail userProfileThumbnail = getUserProfileThumbnail(detailInfo);
 
-		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
+		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileThumbnail);
 	}
 
 	/**
-	 * tagNames 타입을 String -> List<String>로 변환합니다.
-	 * userImageUrls 타입을 String -> List<String>로 변환합니다.
+	 * tagNames의 타입을 String -> List<String>로 변환합니다.
+	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
 	private static DetailInfo getDetailInfo(FindDetailInfoResult result) {
 		return DetailInfo.builder()
@@ -112,6 +112,7 @@ public class AccompanyBoardService {
 			.title(result.title())
 			.content(result.content())
 			.tagNames(result.getTagNamesAsList())
+			.imageUrls(result.getImageUrlsAsList())
 			.region(result.region())
 			.startDate(result.startDate())
 			.endDate(result.endDate())
@@ -120,14 +121,11 @@ public class AccompanyBoardService {
 			.category(result.category())
 			.preferredAge(result.preferredAge())
 			.preferredGender(result.preferredGender())
+			.userId(result.userId())
 			.nickname(result.nickname())
-			.provider(result.provider())
+			.profileImageUrl(result.profileImageUrl())
 			.birthYear(result.birthYear())
 			.gender(result.gender())
-			.travelPreferences(result.travelPreferences())
-			.travelStyles(result.travelStyles())
-			.foodPreferences(result.foodPreferences())
-			.userImageUrls(result.getUserImageUrlsAsList())
 			.build();
 	}
 
@@ -144,16 +142,13 @@ public class AccompanyBoardService {
 		}
 	}
 
-	private UserProfileDetailInfo getUserProfileDetailInfo(DetailInfo detailInfo) {
-		return UserProfileDetailInfo.builder()
+	private UserProfileThumbnail getUserProfileThumbnail(DetailInfo detailInfo) {
+		return UserProfileThumbnail.builder()
+			.userId(detailInfo.getUserId())
 			.nickname(detailInfo.getNickname())
-			.provider(detailInfo.getProvider())
+			.profileImageUrl(detailInfo.getProfileImageUrl())
 			.birthYear(detailInfo.getBirthYear())
 			.gender(detailInfo.getGender())
-			.travelPreferences(detailInfo.getTravelPreferences())
-			.travelStyles(detailInfo.getTravelStyles())
-			.foodPreferences(detailInfo.getFoodPreferences())
-			.userImageUrls(detailInfo.getUserImageUrls())
 			.build();
 	}
 
@@ -164,6 +159,7 @@ public class AccompanyBoardService {
 			.tagNames(detailInfo.getTagNames())
 			.content(detailInfo.getContent())
 			.tagNames(detailInfo.getTagNames())
+			.imageUrls(detailInfo.getImageUrls())
 			.region(detailInfo.getRegion())
 			.startDate(detailInfo.getStartDate())
 			.endDate(detailInfo.getEndDate())

@@ -6,7 +6,6 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
-import static com.dnd.accompany.domain.user.entity.QUserImage.*;
 import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 
 import java.util.List;
@@ -99,23 +98,39 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				accompanyBoard.category,
 				accompanyBoard.preferredAge,
 				accompanyBoard.preferredGender,
+				user.id,
 				user.nickname,
-				user.provider,
+				user.profileImageUrl,
 				userProfile.birthYear,
 				userProfile.gender,
-				userProfile.travelPreferences,
-				userProfile.travelStyles,
-				userProfile.foodPreferences,
 				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyTag.name),
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", userImage.imageUrl)))
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
-			.join(userProfile).on(userProfile.userId.eq(user.id))
+			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
 			.leftJoin(accompanyTag).on(accompanyTag.accompanyBoard.id.eq(accompanyBoard.id))
-			.leftJoin(userImage).on(userImage.userId.eq(user.id))
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
 			.where(accompanyBoard.id.eq(boardId))
 			.where(isHost())
+			.groupBy(
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.content,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				accompanyBoard.headCount,
+				accompanyBoard.capacity,
+				accompanyBoard.category,
+				accompanyBoard.preferredAge,
+				accompanyBoard.preferredGender,
+				user.id,
+				user.nickname,
+				user.profileImageUrl,
+				userProfile.birthYear,
+				userProfile.gender
+			)
 			.fetchOne();
 
 		return Optional.ofNullable(result);

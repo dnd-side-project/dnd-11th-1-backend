@@ -20,6 +20,7 @@ public class AccompanyBoardDetailInfo {
 	String title;
 	String content;
 	List<String> tagNames;
+	List<String> imageUrls;
 	Region region;
 	LocalDateTime startDate;
 	LocalDateTime endDate;
@@ -30,14 +31,15 @@ public class AccompanyBoardDetailInfo {
 	PreferredGender preferredGender;
 
 	@Builder
-	public AccompanyBoardDetailInfo(Long boardId, String title, String content, List<String> tagNames, Region region,
-		LocalDateTime startDate,
-		LocalDateTime endDate, Long headCount, Long capacity, Category category, PreferredAge preferredAge,
-		PreferredGender preferredGender) {
+	public AccompanyBoardDetailInfo(Long boardId, String title, String content, List<String> tagNames,
+		List<String> imageUrls, Region region,
+		LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, Category category,
+		PreferredAge preferredAge, PreferredGender preferredGender) {
 		this.boardId = boardId;
 		this.title = title;
 		this.content = content;
 		this.tagNames = tagNames;
+		this.imageUrls = imageUrls;
 		this.region = region;
 		this.startDate = startDate;
 		this.endDate = endDate;

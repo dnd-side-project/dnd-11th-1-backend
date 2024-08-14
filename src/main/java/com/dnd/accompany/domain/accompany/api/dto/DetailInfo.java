@@ -7,10 +7,7 @@ import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
-import com.dnd.accompany.domain.user.entity.enums.FoodPreference;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
-import com.dnd.accompany.domain.user.entity.enums.TravelPreference;
-import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,6 +23,7 @@ public class DetailInfo {
 	private String title;
 	private String content;
 	private List<String> tagNames;
+	private List<String> imageUrls;
 	private Region region;
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
@@ -34,25 +32,22 @@ public class DetailInfo {
 	private Category category;
 	private PreferredAge preferredAge;
 	private PreferredGender preferredGender;
+	private Long userId;
 	private String nickname;
-	private String provider;
+	private String profileImageUrl;
 	private int birthYear;
 	private Gender gender;
-	private List<TravelPreference> travelPreferences;
-	private List<TravelStyle> travelStyles;
-	private List<FoodPreference> foodPreferences;
-	private List<String> userImageUrls;
 
 	@Builder
-	public DetailInfo(Long boardId, String title, String content, List<String> tagNames, Region region,
-		LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, Category category,
-		PreferredAge preferredAge, PreferredGender preferredGender, String nickname, String provider, int birthYear,
-		Gender gender, List<TravelPreference> travelPreferences, List<TravelStyle> travelStyles,
-		List<FoodPreference> foodPreferences, List<String> userImageUrls) {
+	public DetailInfo(Long boardId, String title, String content, List<String> tagNames, List<String> imageUrls,
+		Region region, LocalDateTime startDate, LocalDateTime endDate, Long headCount, Long capacity, Category category,
+		PreferredAge preferredAge, PreferredGender preferredGender, Long userId, String nickname,
+		String profileImageUrl, int birthYear, Gender gender) {
 		this.boardId = boardId;
 		this.title = title;
 		this.content = content;
 		this.tagNames = tagNames;
+		this.imageUrls = imageUrls;
 		this.region = region;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -61,13 +56,10 @@ public class DetailInfo {
 		this.category = category;
 		this.preferredAge = preferredAge;
 		this.preferredGender = preferredGender;
+		this.userId = userId;
 		this.nickname = nickname;
-		this.provider = provider;
+		this.profileImageUrl = profileImageUrl;
 		this.birthYear = birthYear;
 		this.gender = gender;
-		this.travelPreferences = travelPreferences;
-		this.travelStyles = travelStyles;
-		this.foodPreferences = foodPreferences;
-		this.userImageUrls = userImageUrls;
 	}
 }
