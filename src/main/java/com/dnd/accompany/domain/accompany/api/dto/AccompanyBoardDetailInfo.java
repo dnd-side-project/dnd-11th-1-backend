@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.accompany.api.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
@@ -18,6 +19,7 @@ public class AccompanyBoardDetailInfo {
 	Long boardId;
 	String title;
 	String content;
+	List<String> tagNames;
 	Region region;
 	LocalDateTime startDate;
 	LocalDateTime endDate;
@@ -28,12 +30,14 @@ public class AccompanyBoardDetailInfo {
 	PreferredGender preferredGender;
 
 	@Builder
-	public AccompanyBoardDetailInfo(Long boardId, String title, String content, Region region, LocalDateTime startDate,
+	public AccompanyBoardDetailInfo(Long boardId, String title, String content, List<String> tagNames, Region region,
+		LocalDateTime startDate,
 		LocalDateTime endDate, Long headCount, Long capacity, Category category, PreferredAge preferredAge,
 		PreferredGender preferredGender) {
 		this.boardId = boardId;
 		this.title = title;
 		this.content = content;
+		this.tagNames = tagNames;
 		this.region = region;
 		this.startDate = startDate;
 		this.endDate = endDate;

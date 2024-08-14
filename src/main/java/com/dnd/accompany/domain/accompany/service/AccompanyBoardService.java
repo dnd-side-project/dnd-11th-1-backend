@@ -14,6 +14,7 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.DetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
@@ -71,7 +72,7 @@ public class AccompanyBoardService {
 	}
 
 	/**
-	 * imageUrls 타입을 String -> list<String>로 변환합니다.
+	 * imageUrls 타입을 String -> List<String>로 변환합니다.
 	 */
 	private static List<AccompanyBoardThumbnail> getAccompanyBoardThumbnails(List<FindBoardThumbnailsResult> results) {
 		List<AccompanyBoardThumbnail> thumbnails = results.stream()
@@ -90,13 +91,44 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public ReadAccompanyBoardResponse read(Long boardId) {
-		FindDetailInfoResult detailInfo = accompanyBoardRepository.findDetailInfo(boardId)
+		FindDetailInfoResult detailInfoResult = accompanyBoardRepository.findDetailInfo(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
+
+		DetailInfo detailInfo = getDetailInfo(detailInfoResult);
 
 		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
 		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(detailInfo);
 
 		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
+	}
+
+	/**
+	 * tagNames 타입을 String -> List<String>로 변환합니다.
+	 * userImageUrls 타입을 String -> List<String>로 변환합니다.
+	 */
+	private static DetailInfo getDetailInfo(FindDetailInfoResult result) {
+		return DetailInfo.builder()
+			.boardId(result.boardId())
+			.title(result.title())
+			.content(result.content())
+			.tagNames(result.getTagNamesAsList())
+			.region(result.region())
+			.startDate(result.startDate())
+			.endDate(result.endDate())
+			.headCount(result.headCount())
+			.capacity(result.capacity())
+			.category(result.category())
+			.preferredAge(result.preferredAge())
+			.preferredGender(result.preferredGender())
+			.nickname(result.nickname())
+			.provider(result.provider())
+			.birthYear(result.birthYear())
+			.gender(result.gender())
+			.travelPreferences(result.travelPreferences())
+			.travelStyles(result.travelStyles())
+			.foodPreferences(result.foodPreferences())
+			.userImageUrls(result.getUserImageUrlsAsList())
+			.build();
 	}
 
 	@Transactional
@@ -112,31 +144,34 @@ public class AccompanyBoardService {
 		}
 	}
 
-	private UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
+	private UserProfileDetailInfo getUserProfileDetailInfo(DetailInfo detailInfo) {
 		return UserProfileDetailInfo.builder()
-			.nickname(detailInfo.nickname())
-			.provider(detailInfo.provider())
-			.birthYear(detailInfo.birthYear())
-			.gender(detailInfo.gender())
-			.travelPreferences(detailInfo.travelPreferences())
-			.travelStyles(detailInfo.travelStyles())
-			.foodPreferences(detailInfo.foodPreferences())
+			.nickname(detailInfo.getNickname())
+			.provider(detailInfo.getProvider())
+			.birthYear(detailInfo.getBirthYear())
+			.gender(detailInfo.getGender())
+			.travelPreferences(detailInfo.getTravelPreferences())
+			.travelStyles(detailInfo.getTravelStyles())
+			.foodPreferences(detailInfo.getFoodPreferences())
+			.userImageUrls(detailInfo.getUserImageUrls())
 			.build();
 	}
 
-	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(FindDetailInfoResult detailInfo) {
+	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(DetailInfo detailInfo) {
 		return AccompanyBoardDetailInfo.builder()
-			.boardId(detailInfo.boardId())
-			.title(detailInfo.title())
-			.content(detailInfo.content())
-			.region(detailInfo.region())
-			.startDate(detailInfo.startDate())
-			.endDate(detailInfo.endDate())
-			.headCount(detailInfo.headCount())
-			.capacity(detailInfo.capacity())
-			.category(detailInfo.category())
-			.preferredAge(detailInfo.preferredAge())
-			.preferredGender(detailInfo.preferredGender())
+			.boardId(detailInfo.getBoardId())
+			.title(detailInfo.getTitle())
+			.tagNames(detailInfo.getTagNames())
+			.content(detailInfo.getContent())
+			.tagNames(detailInfo.getTagNames())
+			.region(detailInfo.getRegion())
+			.startDate(detailInfo.getStartDate())
+			.endDate(detailInfo.getEndDate())
+			.headCount(detailInfo.getHeadCount())
+			.capacity(detailInfo.getCapacity())
+			.category(detailInfo.getCategory())
+			.preferredAge(detailInfo.getPreferredAge())
+			.preferredGender(detailInfo.getPreferredGender())
 			.build();
 	}
 }

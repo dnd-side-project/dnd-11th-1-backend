@@ -1,6 +1,9 @@
 package com.dnd.accompany.domain.accompany.api.dto;
 
+import static java.util.Collections.*;
+
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import com.dnd.accompany.domain.accompany.entity.enums.Category;
@@ -16,6 +19,7 @@ public record FindDetailInfoResult(
 	Long boardId,
 	String title,
 	String content,
+	String tagNames,
 	Region region,
 	LocalDateTime startDate,
 	LocalDateTime endDate,
@@ -30,7 +34,20 @@ public record FindDetailInfoResult(
 	Gender gender,
 	List<TravelPreference> travelPreferences,
 	List<TravelStyle> travelStyles,
-	List<FoodPreference> foodPreferences
-	// List<UserImages> 추가 예정
+	List<FoodPreference> foodPreferences,
+	String userImageUrls
 ) {
+	public List<String> getTagNamesAsList() {
+		if (tagNames == null || tagNames.isEmpty()) {
+			return emptyList();
+		}
+		return Arrays.asList(tagNames.split(","));
+	}
+
+	public List<String> getUserImageUrlsAsList() {
+		if (userImageUrls == null || userImageUrls.isEmpty()) {
+			return emptyList();
+		}
+		return Arrays.asList(userImageUrls.split(","));
+	}
 }

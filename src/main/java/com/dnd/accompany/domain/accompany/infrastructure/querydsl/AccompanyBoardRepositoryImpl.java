@@ -2,9 +2,11 @@ package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
+import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
+import static com.dnd.accompany.domain.user.entity.QUserImage.*;
 import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 
 import java.util.List;
@@ -103,11 +105,15 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				userProfile.gender,
 				userProfile.travelPreferences,
 				userProfile.travelStyles,
-				userProfile.foodPreferences))
+				userProfile.foodPreferences,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyTag.name),
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", userImage.imageUrl)))
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
 			.join(userProfile).on(userProfile.userId.eq(user.id))
+			.leftJoin(accompanyTag).on(accompanyTag.accompanyBoard.id.eq(accompanyBoard.id))
+			.leftJoin(userImage).on(userImage.userId.eq(user.id))
 			.where(accompanyBoard.id.eq(boardId))
 			.where(isHost())
 			.fetchOne();
