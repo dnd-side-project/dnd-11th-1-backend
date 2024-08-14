@@ -62,4 +62,25 @@ public class DetailInfo {
 		this.birthYear = birthYear;
 		this.gender = gender;
 	}
+
+	public DetailInfo(FindDetailInfoResult detailInfoResult, List<Category> categories) {
+		this.boardId = detailInfoResult.boardId();
+		this.title = detailInfoResult.title();
+		this.content = detailInfoResult.content();
+		this.tagNames = detailInfoResult.getTagNamesAsList();
+		this.imageUrls = detailInfoResult.getImageUrlsAsList();
+		this.region = detailInfoResult.region();
+		this.startDate = detailInfoResult.startDate();
+		this.endDate = detailInfoResult.endDate();
+		this.headCount = detailInfoResult.headCount();
+		this.capacity = detailInfoResult.capacity();
+		this.categories = categories;
+		this.preferredAge = detailInfoResult.preferredAge();
+		this.preferredGender = detailInfoResult.preferredGender();
+		this.userId = detailInfoResult.userId();
+		this.nickname = detailInfoResult.nickname();
+		this.profileImageUrl = detailInfoResult.profileImageUrl();
+		this.birthYear = detailInfoResult.birthYear();
+		this.gender = detailInfoResult.gender();
+	}
 }

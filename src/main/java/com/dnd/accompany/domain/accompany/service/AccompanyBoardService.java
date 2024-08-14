@@ -16,7 +16,6 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.DetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
@@ -91,42 +90,13 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public ReadAccompanyBoardResponse read(Long boardId) {
-		FindDetailInfoResult detailInfoResult = accompanyBoardRepository.findDetailInfo(boardId)
+		DetailInfo detailInfo = accompanyBoardRepository.findDetailInfoResult(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
-
-		DetailInfo detailInfo = getDetailInfo(detailInfoResult);
 
 		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
 		UserProfileThumbnail userProfileThumbnail = getUserProfileThumbnail(detailInfo);
 
 		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileThumbnail);
-	}
-
-	/**
-	 * tagNames의 타입을 String -> List<String>로 변환합니다.
-	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
-	 */
-	private static DetailInfo getDetailInfo(FindDetailInfoResult result) {
-		return DetailInfo.builder()
-			.boardId(result.boardId())
-			.title(result.title())
-			.content(result.content())
-			.tagNames(result.getTagNamesAsList())
-			.imageUrls(result.getImageUrlsAsList())
-			.region(result.region())
-			.startDate(result.startDate())
-			.endDate(result.endDate())
-			.headCount(result.headCount())
-			.capacity(result.capacity())
-			.categories(result.getCategoriesAsList())
-			.preferredAge(result.preferredAge())
-			.preferredGender(result.preferredGender())
-			.userId(result.userId())
-			.nickname(result.nickname())
-			.profileImageUrl(result.profileImageUrl())
-			.birthYear(result.birthYear())
-			.gender(result.gender())
-			.build();
 	}
 
 	@Transactional

@@ -15,6 +15,8 @@ public record FindDetailInfoResult(
 	Long boardId,
 	String title,
 	String content,
+	String tagNames,
+	String imageUrls,
 	Region region,
 	LocalDateTime startDate,
 	LocalDateTime endDate,
@@ -26,10 +28,7 @@ public record FindDetailInfoResult(
 	String nickname,
 	String profileImageUrl,
 	int birthYear,
-	Gender gender,
-	String categories,
-	String tagNames,
-	String imageUrls
+	Gender gender
 ) {
 	public List<String> getTagNamesAsList() {
 		if (tagNames == null || tagNames.isEmpty()) {
