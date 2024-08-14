@@ -1,8 +1,10 @@
 package com.dnd.accompany.domain.user.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public record UpdateUserProfileImageRequest(
-        List<String> imageUrls
+        @NotNull List<String> imageUrls
 ) {
 }
