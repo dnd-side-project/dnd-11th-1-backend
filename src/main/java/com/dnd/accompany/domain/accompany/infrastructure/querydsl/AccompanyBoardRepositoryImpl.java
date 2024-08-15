@@ -2,7 +2,6 @@ package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
-import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
@@ -16,10 +15,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.dnd.accompany.domain.accompany.api.dto.DetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
-import com.dnd.accompany.domain.accompany.entity.enums.Category;
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
@@ -51,6 +48,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
+
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -82,65 +80,27 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
-	/**
-	 * 동행글, 프로필 정보를 한번에 가져옵니다.
-	 */
 	@Override
-	public Optional<DetailInfo> findDetailInfoResult(Long boardId) {
-		FindDetailInfoResult result = queryFactory
-			.select(Projections.constructor(FindDetailInfoResult.class,
-				accompanyBoard.id,
-				accompanyBoard.title,
-				accompanyBoard.content,
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyTag.name),
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
-				accompanyBoard.region,
-				accompanyBoard.startDate,
-				accompanyBoard.endDate,
-				accompanyBoard.headCount,
-				accompanyBoard.capacity,
-				accompanyBoard.preferredAge,
-				accompanyBoard.preferredGender,
+	public Optional<UserProfileThumbnail> findUserProfileThumbnail(Long userId) {
+		return Optional.of(queryFactory
+			.select(Projections.constructor(UserProfileThumbnail.class,
 				user.id,
 				user.nickname,
 				user.profileImageUrl,
 				userProfile.birthYear,
 				userProfile.gender
 			))
-			.from(accompanyUser)
-			.join(accompanyUser.accompanyBoard, accompanyBoard)
-			.join(accompanyUser.user, user)
+			.from(user)
 			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
-			.leftJoin(accompanyTag).on(accompanyTag.accompanyBoard.id.eq(accompanyBoard.id))
-			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
-			.where(accompanyBoard.id.eq(boardId))
+			.where(user.id.eq(userId))
 			.groupBy(
-				accompanyBoard.id,
-				accompanyBoard.title,
-				accompanyBoard.content,
-				accompanyBoard.region,
-				accompanyBoard.startDate,
-				accompanyBoard.endDate,
-				accompanyBoard.headCount,
-				accompanyBoard.capacity,
-				accompanyBoard.preferredAge,
-				accompanyBoard.preferredGender,
 				user.id,
 				user.nickname,
 				user.profileImageUrl,
 				userProfile.birthYear,
 				userProfile.gender
 			)
-			.fetchOne();
-
-		List<Category> categories = queryFactory
-			.selectFrom(accompanyBoard)
-			.where(accompanyBoard.id.eq(boardId))
-			.fetchOne().getCategories();
-
-		categories.size();
-
-		return Optional.of(new DetailInfo(result, categories));
+			.fetchOne());
 	}
 
 	@Override

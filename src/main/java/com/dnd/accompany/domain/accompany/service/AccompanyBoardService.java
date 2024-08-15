@@ -14,7 +14,6 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
-import com.dnd.accompany.domain.accompany.api.dto.DetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
@@ -24,6 +23,8 @@ import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
+import com.dnd.accompany.domain.user.exception.UserNotFoundException;
+import com.dnd.accompany.domain.user.exception.UserProfileNotFoundException;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -90,13 +91,30 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public ReadAccompanyBoardResponse read(Long boardId) {
-		DetailInfo detailInfo = accompanyBoardRepository.findDetailInfoResult(boardId)
+		AccompanyBoardDetailInfo boardDetailInfo = getAccompanyBoardDetailInfo(boardId);
+		UserProfileThumbnail profileThumbnail = getUserProfileThumbnail(boardId);
+
+		return new ReadAccompanyBoardResponse(boardDetailInfo, profileThumbnail);
+	}
+
+	private UserProfileThumbnail getUserProfileThumbnail(Long boardId) {
+		Long userId = accompanyUserService.findUserIdByAccompanyBoardId(boardId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+		UserProfileThumbnail profileThumbnail = accompanyBoardRepository.findUserProfileThumbnail(userId)
+			.orElseThrow(() -> new UserProfileNotFoundException(ErrorCode.PROFILE_NOT_FOUND));
+		return profileThumbnail;
+	}
+
+	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(Long boardId) {
+		AccompanyBoard accompanyBoard = accompanyBoardRepository.findByIdWithCategories(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 
-		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
-		UserProfileThumbnail userProfileThumbnail = getUserProfileThumbnail(detailInfo);
+		List<String> tagNames = accompanyTagService.findTagNamesByAccompanyBoardId(boardId);
+		List<String> imageUrls = accompanyImageService.findImageUrlsByAccompanyBoardId(boardId);
 
-		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileThumbnail);
+		AccompanyBoardDetailInfo boardDetailInfo = new AccompanyBoardDetailInfo(accompanyBoard, tagNames, imageUrls);
+		return boardDetailInfo;
 	}
 
 	@Transactional
@@ -110,34 +128,5 @@ public class AccompanyBoardService {
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
 		}
-	}
-
-	private UserProfileThumbnail getUserProfileThumbnail(DetailInfo detailInfo) {
-		return UserProfileThumbnail.builder()
-			.userId(detailInfo.getUserId())
-			.nickname(detailInfo.getNickname())
-			.profileImageUrl(detailInfo.getProfileImageUrl())
-			.birthYear(detailInfo.getBirthYear())
-			.gender(detailInfo.getGender())
-			.build();
-	}
-
-	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(DetailInfo detailInfo) {
-		return AccompanyBoardDetailInfo.builder()
-			.boardId(detailInfo.getBoardId())
-			.title(detailInfo.getTitle())
-			.tagNames(detailInfo.getTagNames())
-			.content(detailInfo.getContent())
-			.tagNames(detailInfo.getTagNames())
-			.imageUrls(detailInfo.getImageUrls())
-			.region(detailInfo.getRegion())
-			.startDate(detailInfo.getStartDate())
-			.endDate(detailInfo.getEndDate())
-			.headCount(detailInfo.getHeadCount())
-			.capacity(detailInfo.getCapacity())
-			.categories(detailInfo.getCategories())
-			.preferredAge(detailInfo.getPreferredAge())
-			.preferredGender(detailInfo.getPreferredGender())
-			.build();
 	}
 }
