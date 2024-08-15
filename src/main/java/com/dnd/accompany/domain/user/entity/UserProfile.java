@@ -2,6 +2,7 @@ package com.dnd.accompany.domain.user.entity;
 
 import com.dnd.accompany.domain.user.entity.enums.FoodPreference;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
+import com.dnd.accompany.domain.user.entity.enums.Grade;
 import com.dnd.accompany.domain.user.entity.enums.TravelPreference;
 import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
 import jakarta.persistence.*;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dnd.accompany.domain.user.entity.enums.Grade.ROOKIE;
 
 @Table(name = "user_profiles")
 @Entity
@@ -39,6 +42,8 @@ public class UserProfile {
 
     @Column
     private String socialMediaUrl;
+
+    private Grade grade = ROOKIE;
 
     @Builder.Default
     @ElementCollection(targetClass = TravelPreference.class)
