@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.user.entity.enums.FoodPreference;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
+import com.dnd.accompany.domain.user.entity.enums.Grade;
 import com.dnd.accompany.domain.user.entity.enums.TravelPreference;
 import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
 
@@ -25,6 +26,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.dnd.accompany.domain.user.entity.enums.Grade.ROOKIE;
+
 @Table(name = "user_profiles")
 @Entity
 @Getter
@@ -35,31 +38,57 @@ import lombok.NoArgsConstructor;
 @SQLDelete(sql = "UPDATE user_profiles SET deleted = true WHERE id = ?")
 public class UserProfile {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	private Long userId;
+  @Column(nullable = false)
+  private Long userId;
 
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
+  @Column(length = 50)
+  private String description;
 
-	private int birthYear;
+  @Enumerated(EnumType.STRING)
+  private Gender gender;
 
-	@Builder.Default
-	@ElementCollection(targetClass = TravelPreference.class)
-	@Enumerated(EnumType.STRING)
-	private List<TravelPreference> travelPreferences = new ArrayList<>();
+  private int birthYear;
 
-	@Builder.Default
-	@ElementCollection(targetClass = TravelStyle.class)
-	@Enumerated(EnumType.STRING)
-	private List<TravelStyle> travelStyles = new ArrayList<>();
+  @Column
+  private String socialMediaUrl;
 
-	@Builder.Default
-	@ElementCollection(targetClass = FoodPreference.class)
-	@Enumerated(EnumType.STRING)
-	private List<FoodPreference> foodPreferences = new ArrayList<>();
+  private Grade grade = ROOKIE;
 
-	private boolean deleted = Boolean.FALSE;
+  @Builder.Default
+  @ElementCollection(targetClass = TravelPreference.class, fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
+  private List<TravelPreference> travelPreferences = new ArrayList<>();
+
+  @Builder.Default
+  @ElementCollection(targetClass = TravelStyle.class, fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
+  private List<TravelStyle> travelStyles = new ArrayList<>();
+
+  @Builder.Default
+  @ElementCollection(targetClass = FoodPreference.class, fetch = FetchType.EAGER)
+  private List<FoodPreference> foodPreferences = new ArrayList<>();
+
+  private boolean deleted = Boolean.FALSE;
+
+  public void updateUserProfile(
+          String description,
+          Gender gender,
+          int birthYear,
+          List<TravelPreference> travelPreferences,
+          List<TravelStyle> travelStyles,
+          List<FoodPreference> foodPreferences,
+          String socialMediaUrl
+  ) {
+      this.description = description;
+      this.gender = gender;
+      this.birthYear = birthYear;
+      this.travelPreferences = travelPreferences;
+      this.travelStyles = travelStyles;
+      this.foodPreferences = foodPreferences;
+      this.socialMediaUrl = socialMediaUrl;
+  }
 }
