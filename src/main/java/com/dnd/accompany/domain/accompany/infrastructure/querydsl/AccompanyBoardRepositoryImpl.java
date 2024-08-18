@@ -116,4 +116,12 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 		return fetchCount != null;
 	}
+
+	@Override
+	public Optional<String> findNickname(Long userId) {
+		return Optional.of(queryFactory
+			.select(user.nickname)
+			.from(user)
+			.fetchOne());
+	}
 }

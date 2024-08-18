@@ -14,15 +14,18 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
+import com.dnd.accompany.domain.accompany.entity.AccompanyImage;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
-import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
-import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
+import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardAccessDeniedException;
+import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
+import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.exception.UserNotFoundException;
 import com.dnd.accompany.domain.user.exception.UserProfileNotFoundException;
 import com.dnd.accompany.global.common.response.ErrorCode;
@@ -128,5 +131,27 @@ public class AccompanyBoardService {
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
 		}
+	}
+
+	public AccompanyBoardThumbnail findAccompanyThumbnail(Long boardId, Long userId){
+		FindBoardThumbnailResult result = accompanyBoardRepository.findBoardThumbnail(boardId)
+			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
+
+		String nickname = accompanyBoardRepository.findNickname(userId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+		List<String> imageUrls = accompanyImageService.findImageUrlsByAccompanyBoardId(boardId);
+
+		AccompanyBoardThumbnail boardThumbnail = AccompanyBoardThumbnail.builder()
+			.boardId(result.boardId())
+			.title(result.title())
+			.region(result.region())
+			.startDate(result.startDate())
+			.endDate(result.endDate())
+			.nickname(nickname)
+			.imageUrls(imageUrls)
+			.build();
+
+		return boardThumbnail;
 	}
 }
