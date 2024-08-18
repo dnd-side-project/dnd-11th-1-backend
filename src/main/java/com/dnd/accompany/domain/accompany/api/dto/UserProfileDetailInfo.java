@@ -15,8 +15,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserProfileDetailInfo {
+	private Long userId;
 	private String nickname;
-	private String provider;
+	private String profileImageUrl;
 	private int birthYear;
 	private Gender gender;
 	private List<TravelPreference> travelPreferences;
@@ -25,11 +26,11 @@ public class UserProfileDetailInfo {
 	private List<String> userImageUrls;
 
 	@Builder
-	public UserProfileDetailInfo(String nickname, String provider, int birthYear, Gender gender,
-		List<TravelPreference> travelPreferences,
-		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences, List<String> userImageUrls) {
+	public UserProfileDetailInfo(Long userId, String nickname, String profileImageUrl, int birthYear, Gender gender,
+		List<TravelPreference> travelPreferences, List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences, List<String> userImageUrls) {
+		this.userId = userId;
 		this.nickname = nickname;
-		this.provider = provider;
+		this.profileImageUrl = profileImageUrl;
 		this.birthYear = birthYear;
 		this.gender = gender;
 		this.travelPreferences = travelPreferences;
