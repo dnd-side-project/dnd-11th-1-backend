@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccompanyUserService {
 	private final AccompanyUserRepository accompanyUserRepository;
-	private final AccompanyBoardRepository accompanyBoardRepository;
 
 	@Transactional
 	public void save(Long userId, AccompanyBoard accompanyBoard, Role role) {
@@ -32,11 +31,6 @@ public class AccompanyUserService {
 	@Transactional(readOnly = true)
 	public Optional<Long> findUserIdByAccompanyBoardId(Long boardId) {
 		return accompanyUserRepository.findUserIdByAccompanyBoardId(boardId);
-	}
-
-	@Transactional(readOnly = true)
-	public boolean isHostOfBoard(Long userId, Long boardId) {
-		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
 	}
 
 	@Transactional

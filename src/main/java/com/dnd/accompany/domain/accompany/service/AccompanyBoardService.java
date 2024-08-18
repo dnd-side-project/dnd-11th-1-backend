@@ -119,7 +119,7 @@ public class AccompanyBoardService {
 
 	@Transactional
 	public void delete(Long userId, Long boardId) {
-		if (accompanyUserService.isHostOfBoard(userId, boardId)) {
+		if (accompanyBoardRepository.isHostOfBoard(userId, boardId)) {
 			accompanyImageService.deleteByBoardId(boardId);
 			accompanyTagService.deleteByBoardId(boardId);
 			accompanyRequestService.deleteByBoardId(boardId);
