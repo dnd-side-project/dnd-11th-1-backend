@@ -6,5 +6,4 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
 
 public interface AccompanyRequestRepositoryCustom {
-	Optional<AccompanyRequest> findRequestDetailInfo(Long boardId, Long userId, Role role);
 }

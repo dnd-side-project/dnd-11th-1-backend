@@ -6,4 +6,6 @@ import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 
 public interface AccompanyUserRepositoryCustom {
 	Optional<UserProfileThumbnail> findUserProfileThumbnail(Long userId);
+
+	Optional<String> findNickname(Long userId);
 }
