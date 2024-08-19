@@ -74,26 +74,25 @@ public class AccompanyBoardService {
 		return thumbnails;
 	}
 
+	@Transactional(readOnly = true)
 	public AccompanyBoard getAccompanyBoard(Long boardId){
 		return accompanyBoardRepository.findByIdWithCategories(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
+	@Transactional(readOnly = true)
 	public boolean isHostOfBoard(Long userId, Long boardId){
 		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
 	}
 
+	@Transactional
 	public void deleteByBoardId(Long boardId){
 		accompanyBoardRepository.deleteById(boardId);
 	}
 
+	@Transactional(readOnly = true)
 	public FindBoardThumbnailResult getBoardThumbnail(Long boardId){
 		return accompanyBoardRepository.findBoardThumbnail(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
-	}
-
-	public String getNickname(Long userId){
-		return accompanyBoardRepository.findNickname(userId)
-			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
 }

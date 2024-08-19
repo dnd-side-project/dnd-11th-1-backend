@@ -14,7 +14,6 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
-import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyRequest;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
@@ -82,7 +81,7 @@ public class AccompanyServiceFacade {
 	@Transactional(readOnly = true)
 	public AccompanyBoardThumbnail getBoardThumbnail(Long boardId, Long userId) {
 		FindBoardThumbnailResult result = accompanyBoardService.getBoardThumbnail(boardId);
-		String nickname = accompanyBoardService.getNickname(userId);
+		String nickname = accompanyUserService.getNickname(userId);
 		List<String> imageUrls = accompanyImageService.getImageUrls(boardId);
 
 		AccompanyBoardThumbnail boardThumbnail = AccompanyBoardThumbnail.builder()
@@ -99,13 +98,22 @@ public class AccompanyServiceFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public ReadAccompanyResponse getRequestDetail(ReadAccompanyRequest request) {
-		AccompanyBoardThumbnail boardThumbnail = getBoardThumbnail(request.boardId(), request.userId());
+	public ReadAccompanyResponse getRequestDetail(Long boardId, Long userId, Long applicantId) {
+		Long hostId = accompanyUserService.getHostIdByAccompanyBoardId(boardId);
+		AccompanyBoardThumbnail boardThumbnail = getBoardThumbnail(boardId, hostId);
 
-		UserProfileDetailInfo profileDetailInfo = getUserProfileDetailInfo(request.userId());
+		UserProfileDetailInfo profileDetailInfo;
+		AccompanyRequestDetailInfo requestDetailInfo;
 
-		AccompanyRequestDetailInfo requestDetailInfo = accompanyRequestService.getRequestDetailInfo(request.boardId(),
-			request.userId(), request.role());
+		if(applicantId == null){
+			profileDetailInfo = getUserProfileDetailInfo(hostId);
+
+			requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, userId);
+		}
+		else{
+			profileDetailInfo = getUserProfileDetailInfo(applicantId);
+			requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, applicantId);
+		}
 
 		return new ReadAccompanyResponse(boardThumbnail, profileDetailInfo, requestDetailInfo);
 	}

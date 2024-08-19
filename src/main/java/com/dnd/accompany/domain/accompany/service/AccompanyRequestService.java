@@ -38,8 +38,9 @@ public class AccompanyRequestService {
 		accompanyRequestRepository.deleteByAccompanyBoardId(boardId);
 	}
 
-	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId, Role role) {
-		AccompanyRequest accompanyRequest = accompanyRequestRepository.findRequestDetailInfo(boardId, userId, role)
+	@Transactional(readOnly = true)
+	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId) {
+		AccompanyRequest accompanyRequest = accompanyRequestRepository.findRequestDetailInfo(boardId, userId)
             .orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
 
         return AccompanyRequestDetailInfo.builder()

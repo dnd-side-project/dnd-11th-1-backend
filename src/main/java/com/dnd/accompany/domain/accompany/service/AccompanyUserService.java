@@ -42,8 +42,19 @@ public class AccompanyUserService {
 		return profileThumbnail;
 	}
 
+	@Transactional(readOnly = true)
+	public Long getHostIdByAccompanyBoardId(Long boardId){
+		return accompanyUserRepository.findHostIdByAccompanyBoardId(boardId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+	}
+
 	@Transactional
 	public void deleteByBoardId(Long boardId) {
 		accompanyUserRepository.deleteByAccompanyBoardId(boardId);
+	}
+
+	public String getNickname(Long userId){
+		return accompanyUserRepository.findNickname(userId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
 }
