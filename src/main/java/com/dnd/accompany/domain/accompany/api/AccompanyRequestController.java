@@ -7,23 +7,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyRequest;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
-import com.dnd.accompany.domain.accompany.service.AccompanyRequestService;
+import com.dnd.accompany.domain.accompany.service.AccompanyServiceFacade;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "AccompanyBoard")
+@Tag(name = "AccompanyRequest")
 @RestController
 @RequestMapping("api/v1/accompany/requests")
 @RequiredArgsConstructor
 public class AccompanyRequestController {
 
-	private final AccompanyRequestService accompanyRequestService;
+	private final AccompanyServiceFacade accompanyServiceFacade;
 
 	@Operation(summary = "동행 신청서 조회")
 	@PostMapping
 	public ResponseEntity<ReadAccompanyResponse> read(ReadAccompanyRequest request) {
-		return ResponseEntity.ok(accompanyRequestService.read(request));
+		return ResponseEntity.ok(accompanyServiceFacade.getRequestDetail(request));
 	}
 }
