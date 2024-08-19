@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
+import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyUserRepositoryCustom;
 
-@Repository
-public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long> {
+public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long>, AccompanyUserRepositoryCustom {
 	void deleteByAccompanyBoardId(Long boardId);
 
 	@Query("SELECT u.user.id FROM AccompanyUser u WHERE u.accompanyBoard.id = :boardId")
