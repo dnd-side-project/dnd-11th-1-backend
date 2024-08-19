@@ -14,6 +14,8 @@ import com.dnd.accompany.domain.accompany.service.AccompanyServiceFacade;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,7 @@ public class AccompanyRequestController {
 	public ResponseEntity<ReadAccompanyResponse> read(
 		@PathVariable(name = "id") Long boardId,
 		@AuthenticationPrincipal JwtAuthentication user,
+		@Parameter(name = "applicantId", description = "조회를 요청하는 클라이언트가 게시글 작성자인 경우에만 필요합니다.", in = ParameterIn.QUERY)
 		@RequestParam(value = "applicantId", required = false) Long applicantId) {
 		return ResponseEntity.ok(accompanyServiceFacade.getRequestDetail(boardId, user.getId(), applicantId));
 	}
