@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccompanyBoardThumbnail {
+public class SendedAccompany {
 	private Long boardId;
 	private String title;
 	private Region region;
@@ -22,8 +22,8 @@ public class AccompanyBoardThumbnail {
 	private List<String> imageUrls;
 
 	@Builder
-	public AccompanyBoardThumbnail(Long boardId, String title, Region region, LocalDateTime startDate,
-		LocalDateTime endDate, String nickname, List<String> imageUrls) {
+	public SendedAccompany(Long boardId, String title, Region region, LocalDateTime startDate, LocalDateTime endDate,
+        String nickname, List<String> imageUrls) {
 		this.boardId = boardId;
 		this.title = title;
 		this.region = region;
