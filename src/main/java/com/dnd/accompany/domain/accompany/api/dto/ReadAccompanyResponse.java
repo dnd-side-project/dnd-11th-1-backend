@@ -1,12 +1,11 @@
 package com.dnd.accompany.domain.accompany.api.dto;
 
-import java.util.List;
 
-import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
+import com.dnd.accompany.domain.user.dto.UserProfileDetailResponse;
 
 public record ReadAccompanyResponse(
 	AccompanyBoardThumbnail boardThumbnail,
-	UserProfileDetailInfo profileInfo,
+	UserProfileDetailResponse profileInfo,
 	AccompanyRequestDetailInfo requestInfo
 ) {
 }

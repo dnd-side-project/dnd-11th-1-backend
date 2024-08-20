@@ -15,7 +15,6 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
-import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardAccessDeniedException;
@@ -102,7 +101,7 @@ public class AccompanyServiceFacade {
 		Long hostId = accompanyUserService.getHostIdByAccompanyBoardId(boardId);
 		AccompanyBoardThumbnail boardThumbnail = getBoardThumbnail(boardId, hostId);
 
-		UserProfileDetailInfo profileDetailInfo;
+		UserProfileDetailResponse profileDetailInfo;
 		AccompanyRequestDetailInfo requestDetailInfo;
 
 		if(applicantId == null){
@@ -118,19 +117,7 @@ public class AccompanyServiceFacade {
 		return new ReadAccompanyResponse(boardThumbnail, profileDetailInfo, requestDetailInfo);
 	}
 
-	private UserProfileDetailInfo getUserProfileDetailInfo(Long userId) {
-		UserProfileDetailResponse response = userProfileService.findUserProfileDetails(userId);
-
-		return UserProfileDetailInfo.builder()
-			.userId(response.userId())
-			.nickname(response.nickname())
-			.profileImageUrl(response.profileImageUrl())
-			.birthYear(response.birthYear())
-			.gender(response.gender())
-			.travelPreferences(response.travelPreferences())
-			.travelStyles(response.travelStyles())
-			.foodPreferences(response.foodPreferences())
-			.userImageUrls(response.userImageUrls())
-			.build();
+	private UserProfileDetailResponse getUserProfileDetailInfo(Long userId) {
+		return userProfileService.findUserProfileDetails(userId);
 	}
 }
