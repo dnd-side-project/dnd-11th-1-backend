@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public record FindApplicantDetailsResult(
-	Long boardId,
+	Long requestId,
 	Long userId,
 	String nickname,
 	String provider,

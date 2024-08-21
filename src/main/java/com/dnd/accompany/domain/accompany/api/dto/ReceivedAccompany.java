@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReceivedAccompany {
-	private Long boardId;
+	private Long requestId;
 	private Long userId;
 	private String nickname;
 	private String provider;
@@ -32,10 +32,10 @@ public class ReceivedAccompany {
 	private List<String> userImageUrl;
 
 	@Builder
-	public ReceivedAccompany(Long boardId, Long userId, String nickname, String provider, String profileImageUrl, String description,
+	public ReceivedAccompany(Long requestId, Long userId, String nickname, String provider, String profileImageUrl, String description,
 		Gender gender, int birthYear, String socialMediaUrl, Grade grade, List<TravelPreference> travelPreferences,
 		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences, List<String> userImageUrl) {
-		this.boardId = boardId;
+		this.requestId = requestId;
 		this.userId = userId;
         this.nickname = nickname;
         this.provider = provider;

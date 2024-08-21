@@ -82,7 +82,7 @@ public class AccompanyRequestService {
 				UserProfile userProfile = userProfileMap.get(result.userId());
 
 				return ReceivedAccompany.builder()
-				.boardId(result.boardId())
+				.requestId(result.requestId())
 				.userId(result.userId())
 				.nickname(result.nickname())
 				.provider(result.provider())

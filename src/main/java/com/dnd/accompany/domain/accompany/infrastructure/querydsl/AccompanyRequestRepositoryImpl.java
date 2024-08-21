@@ -76,7 +76,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 	public Slice<FindApplicantDetailsResult> findApplicantDetails(Pageable pageable, Long hostId) {
 		List<FindApplicantDetailsResult> content = queryFactory
 			.select(Projections.constructor(FindApplicantDetailsResult.class,
-				accompanyBoard.id,
+				accompanyRequest.id,
 				user.id,
 				user.nickname,
 				user.provider,
@@ -90,7 +90,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyUser.user.id.eq(hostId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
-			.groupBy(accompanyBoard.id, user.id, user.nickname, user.provider,
+			.groupBy(accompanyRequest.id, user.id, user.nickname, user.provider,
 				user.profileImageUrl, accompanyRequest.updatedAt, accompanyRequest.createdAt)
 			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.createdAt.desc())
 			.offset(pageable.getOffset())
