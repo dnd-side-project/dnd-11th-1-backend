@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
+import com.dnd.accompany.domain.accompany.api.dto.ReceivedAccompany;
 import com.dnd.accompany.domain.accompany.api.dto.SendedAccompany;
 import com.dnd.accompany.domain.accompany.service.AccompanyRequestService;
 import com.dnd.accompany.domain.accompany.service.AccompanyServiceFacade;
@@ -45,12 +46,12 @@ public class AccompanyRequestController {
 
 	@Operation(summary = "받은 동행 신청서 목록 조회")
 	@GetMapping("/received")
-	public ResponseEntity<PageResponse<SendedAccompany>> readAllReceived(
+	public ResponseEntity<PageResponse<ReceivedAccompany>> readAllReceived(
 		@PageableDefault(
 			sort = {"updatedAt", "createdAt"},
 			direction = Sort.Direction.DESC) Pageable pageable,
 		@AuthenticationPrincipal JwtAuthentication user) {
-		return ResponseEntity.ok(accompanyRequestService.getAllSendedAccompanies(pageable, user.getId()));
+		return ResponseEntity.ok(accompanyRequestService.getAllReceivedAccompanies(pageable, user.getId()));
 	}
 
 	@Operation(summary = "동행 신청서 조회")
