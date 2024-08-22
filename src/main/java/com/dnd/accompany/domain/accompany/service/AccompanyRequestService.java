@@ -23,6 +23,7 @@ import com.dnd.accompany.domain.accompany.api.dto.ReceivedAccompany;
 import com.dnd.accompany.domain.accompany.api.dto.SendedAccompany;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
+import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.exception.accompanyrequest.AccompanyRequestNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyRequestRepository;
 import com.dnd.accompany.domain.user.entity.User;
@@ -116,7 +117,7 @@ public class AccompanyRequestService {
 	private static List<SendedAccompany> getSendedAccompanies(List<FindBoardThumbnailsResult> results) {
 		List<SendedAccompany> sendedAccompanies = results.stream()
 			.map(result -> SendedAccompany.builder()
-				.boardId(result.boardId())
+				.requestId(result.requestId())
 				.title(result.title())
 				.region(result.region())
 				.startDate(result.startDate())
@@ -133,17 +134,27 @@ public class AccompanyRequestService {
 		accompanyRequestRepository.deleteByAccompanyBoardId(boardId);
 	}
 
+	@Transactional
+	public Long getApplicantId(Long requestId) {
+		return accompanyRequestRepository.findUserId(requestId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+	}
 	@Transactional(readOnly = true)
 	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId) {
 		AccompanyRequest accompanyRequest = accompanyRequestRepository.findRequestDetailInfo(boardId, userId)
             .orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
 
         return AccompanyRequestDetailInfo.builder()
-            .boardId(accompanyRequest.getAccompanyBoard().getId())
+            .requestId(accompanyRequest.getId())
 			.userId(accompanyRequest.getUser().getId())
 			.introduce(accompanyRequest.getIntroduce())
 			.chatLink(accompanyRequest.getChatLink())
 			.build();
+	}
+
+	public Long getBoardId(Long requestId){
+		return accompanyRequestRepository.findBoardId(requestId)
+			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
 	public AccompanyBoard getAccompanyBoard(Long boardId) {

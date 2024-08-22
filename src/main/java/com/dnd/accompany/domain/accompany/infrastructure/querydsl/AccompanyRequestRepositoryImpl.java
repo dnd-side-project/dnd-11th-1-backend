@@ -40,7 +40,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Long applicantId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
-				accompanyBoard.id,
+				accompanyRequest.id,
 				accompanyBoard.title,
 				accompanyBoard.region,
 				accompanyBoard.startDate,
