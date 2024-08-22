@@ -79,6 +79,39 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByUserId(Pageable pageable, Long userId) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(accompanyUser.user.id.eq(userId))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
+				accompanyUser.id)
+			.orderBy(accompanyUser.updatedAt.desc(), accompanyUser.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		boolean hasNext = content.size() > pageable.getPageSize();
+
+		if (hasNext) {
+			content.remove(content.size() - 1);
+		}
+
+		return new SliceImpl<>(content, pageable, hasNext);
+	}
+
+	@Override
 	public boolean isHostOfBoard(Long userId, Long boardId) {
 		Integer fetchCount = queryFactory.selectOne()
 			.from(accompanyUser)

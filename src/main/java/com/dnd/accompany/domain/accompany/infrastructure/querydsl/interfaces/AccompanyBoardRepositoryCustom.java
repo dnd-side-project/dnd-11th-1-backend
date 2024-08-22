@@ -9,6 +9,8 @@ import com.dnd.accompany.domain.accompany.entity.enums.Region;
 public interface AccompanyBoardRepositoryCustom {
 	Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region);
 
+	Slice<FindBoardThumbnailsResult> findBoardThumbnailsByUserId(Pageable pageable, Long userId);
+
 	boolean isHostOfBoard(Long userId, Long boardId);
 
 	void markAsRemoved(Long boardId);

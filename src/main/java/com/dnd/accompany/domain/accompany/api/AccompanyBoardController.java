@@ -91,4 +91,14 @@ public class AccompanyBoardController {
 		accompanyServiceFacade.removeBoard(user.getId(), id);
 		return ResponseEntity.ok().build();
 	}
+
+	@Operation(summary = "동행 기록 조회")
+	@GetMapping("/records")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
+		@PageableDefault(
+			sort = {"updatedAt", "createdAt"},
+			direction = Sort.Direction.DESC) Pageable pageable,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		return ResponseEntity.ok(accompanyBoardService.getAllRecords(pageable, user.getId()));
+	}
 }
