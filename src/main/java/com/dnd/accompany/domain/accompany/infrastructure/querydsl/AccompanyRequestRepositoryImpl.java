@@ -1,6 +1,5 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
-
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
