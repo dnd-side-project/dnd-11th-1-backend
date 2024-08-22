@@ -6,15 +6,11 @@ import com.dnd.accompany.domain.review.entity.enums.RecommendationStatus;
 import com.dnd.accompany.domain.review.entity.enums.SatisfactionLevel;
 import com.dnd.accompany.domain.review.entity.enums.TravelPreference;
 import com.dnd.accompany.domain.review.entity.enums.TravelStyle;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 public record CreateReviewRequest(
-    @NotNull
-    Long writerId,
-
     @NotNull
     Long accompanyBoardId,
 
