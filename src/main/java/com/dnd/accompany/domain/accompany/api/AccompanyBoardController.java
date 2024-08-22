@@ -96,7 +96,7 @@ public class AccompanyBoardController {
 	@GetMapping("/records")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
 		@PageableDefault(
-			sort = {"updatedAt", "createdAt"},
+			sort = {"createdAt"},
 			direction = Sort.Direction.DESC) Pageable pageable,
 		@AuthenticationPrincipal JwtAuthentication user) {
 		return ResponseEntity.ok(accompanyBoardService.getAllRecords(pageable, user.getId()));
