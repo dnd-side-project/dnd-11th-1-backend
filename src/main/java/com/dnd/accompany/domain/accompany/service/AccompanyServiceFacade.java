@@ -67,7 +67,6 @@ public class AccompanyServiceFacade {
 	@Transactional
 	public void removeBoard(Long userId, Long boardId) {
 		if (accompanyBoardService.isHostOfBoard(userId, boardId)) {
-			accompanyUserService.startAccompany(boardId);
 			accompanyBoardService.removeBoard(boardId);
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
