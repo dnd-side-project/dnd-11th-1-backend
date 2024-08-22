@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.accompany.entity;
 
+import static com.dnd.accompany.domain.accompany.entity.enums.BoardStatus.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,4 +88,8 @@ public class AccompanyBoard extends TimeBaseEntity {
 	private PreferredGender preferredGender;
 
 	private boolean deleted = Boolean.FALSE;
+
+	public void remove(){
+		this.boardStatus = REMOVED;
+	}
 }

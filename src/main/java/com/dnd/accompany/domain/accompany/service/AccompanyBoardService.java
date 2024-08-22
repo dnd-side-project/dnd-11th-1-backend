@@ -3,6 +3,7 @@ package com.dnd.accompany.domain.accompany.service;
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -94,9 +95,10 @@ public class AccompanyBoardService {
 		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
 	}
 
-	@Transactional
-	public void removeBoard(Long boardId) {
-		accompanyBoardRepository.markAsRemoved(boardId);
+	@Transactional(readOnly = true)
+	public AccompanyBoard getById(Long boardId){
+		return accompanyBoardRepository.findById(boardId)
+			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
 	@Transactional

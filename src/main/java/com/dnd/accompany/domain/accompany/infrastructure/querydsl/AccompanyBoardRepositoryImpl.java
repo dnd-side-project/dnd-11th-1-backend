@@ -3,7 +3,6 @@ package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
-import static com.dnd.accompany.domain.accompany.entity.enums.BoardStatus.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
@@ -97,7 +95,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
 				accompanyUser.id)
-			.orderBy(accompanyUser.updatedAt.desc(), accompanyUser.createdAt.desc())
+			.orderBy(accompanyUser.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();
@@ -123,14 +121,5 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.fetchFirst();
 
 		return fetchCount != null;
-	}
-
-	@Override
-	@Transactional
-	public void markAsRemoved(Long boardId) {
-		queryFactory.update(accompanyBoard)
-			.set(accompanyBoard.boardStatus, REMOVED)
-			.where(accompanyBoard.id.eq(boardId))
-			.execute();
 	}
 }
