@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.dnd.accompany.domain.accompany.entity.enums.BoardStatus;
 import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
@@ -66,6 +67,9 @@ public class AccompanyBoard extends TimeBaseEntity {
 
 	@Column(nullable = false)
 	private Long capacity;
+
+	@Column(nullable = false)
+	private BoardStatus boardStatus;
 
 	@Builder.Default
 	@ElementCollection(targetClass = Category.class)
