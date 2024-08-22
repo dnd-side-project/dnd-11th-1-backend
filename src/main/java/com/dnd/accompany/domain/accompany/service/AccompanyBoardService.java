@@ -86,6 +86,11 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional
+	public void removeBoard(Long boardId) {
+		accompanyBoardRepository.markAsRemoved(boardId);
+	}
+
+	@Transactional
 	public void deleteByBoardId(Long boardId){
 		accompanyBoardRepository.deleteById(boardId);
 	}

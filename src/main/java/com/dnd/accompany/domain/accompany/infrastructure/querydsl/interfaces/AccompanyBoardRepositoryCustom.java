@@ -10,4 +10,6 @@ public interface AccompanyBoardRepositoryCustom {
 	Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region);
 
 	boolean isHostOfBoard(Long userId, Long boardId);
+
+	void markAsRemoved(Long boardId);
 }
