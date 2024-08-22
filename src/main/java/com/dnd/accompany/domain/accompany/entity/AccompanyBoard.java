@@ -68,6 +68,7 @@ public class AccompanyBoard extends TimeBaseEntity {
 	@Column(nullable = false)
 	private Long capacity;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private BoardStatus boardStatus;
 
