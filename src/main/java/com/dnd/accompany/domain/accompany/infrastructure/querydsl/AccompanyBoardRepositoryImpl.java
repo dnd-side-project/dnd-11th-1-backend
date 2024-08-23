@@ -33,6 +33,42 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	private final JPAQueryFactory queryFactory;
 
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByKeyword(Pageable pageable, String keyword) {
+		BooleanBuilder searchCondition = new BooleanBuilder()
+			.and(isHost())
+			.and(isContains(keyword));
+
+		List<FindBoardThumbnailsResult> content = fetchBoardThumbnails(searchCondition, pageable);
+
+		return createSlice(pageable, content);
+	}
+
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
+		BooleanBuilder readCondition = new BooleanBuilder()
+			.and(isHost())
+			.and(isRegion(region));
+
+		List<FindBoardThumbnailsResult> content = fetchBoardThumbnails(readCondition, pageable);
+
+		return createSlice(pageable, content);
+	}
+
+	@Override
+	public boolean isHostOfBoard(Long userId, Long boardId) {
+		Integer fetchCount = queryFactory.selectOne()
+			.from(accompanyUser)
+			.where(
+				accompanyUser.user.id.eq(userId)
+					.and(accompanyUser.accompanyBoard.id.eq(boardId))
+					.and(isHost())
+			)
+			.fetchFirst();
+
+		return fetchCount != null;
+	}
+
 	private BooleanExpression isHost() {
 		return accompanyUser.role.eq(HOST);
 	}
@@ -69,9 +105,8 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		return booleanBuilder;
 	}
 
-	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByKeyword(Pageable pageable, String keyword) {
-		List<FindBoardThumbnailsResult> content = queryFactory
+	private List<FindBoardThumbnailsResult> fetchBoardThumbnails(BooleanBuilder condition, Pageable pageable) {
+		return queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
@@ -84,15 +119,17 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
 			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
-			.where(isHost())
-			.where(isContains(keyword))
+			.where(condition)
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();
+	}
 
+	private SliceImpl<FindBoardThumbnailsResult> createSlice(Pageable pageable,
+		List<FindBoardThumbnailsResult> content) {
 		boolean hasNext = content.size() > pageable.getPageSize();
 
 		if (hasNext) {
@@ -100,52 +137,5 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		}
 
 		return new SliceImpl<>(content, pageable, hasNext);
-	}
-
-	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
-		List<FindBoardThumbnailsResult> content = queryFactory
-			.select(Projections.constructor(FindBoardThumbnailsResult.class,
-				accompanyBoard.id,
-				accompanyBoard.title,
-				accompanyBoard.region,
-				accompanyBoard.startDate,
-				accompanyBoard.endDate,
-				user.nickname,
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
-			.from(accompanyUser)
-			.join(accompanyUser.accompanyBoard, accompanyBoard)
-			.join(accompanyUser.user, user)
-			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
-			.where(isHost())
-			.where(isRegion(region))
-			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
-				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
-			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1)
-			.fetch();
-
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
-	}
-
-	@Override
-	public boolean isHostOfBoard(Long userId, Long boardId) {
-		Integer fetchCount = queryFactory.selectOne()
-			.from(accompanyUser)
-			.where(
-				accompanyUser.user.id.eq(userId)
-					.and(accompanyUser.accompanyBoard.id.eq(boardId))
-					.and(isHost())
-			)
-			.fetchFirst();
-
-		return fetchCount != null;
 	}
 }
