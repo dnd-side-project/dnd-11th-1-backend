@@ -48,6 +48,15 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
+	public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(Pageable pageable, String keyword) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(pageable, keyword);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails);
+	}
+
+	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getAllBoards(Pageable pageable, Region region) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(pageable, region);
 

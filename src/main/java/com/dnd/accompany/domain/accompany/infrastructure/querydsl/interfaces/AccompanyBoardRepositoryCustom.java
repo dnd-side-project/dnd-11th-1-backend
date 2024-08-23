@@ -7,6 +7,8 @@ import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
 public interface AccompanyBoardRepositoryCustom {
+	Slice<FindBoardThumbnailsResult> findBoardThumbnailsByKeyword(Pageable pageable, String keyword);
+
 	Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region);
 
 	boolean isHostOfBoard(Long userId, Long boardId);

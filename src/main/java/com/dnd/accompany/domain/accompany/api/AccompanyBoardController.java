@@ -49,6 +49,16 @@ public class AccompanyBoardController {
 		return ResponseEntity.ok(accompanyServiceFacade.createBoard(user.getId(), request));
 	}
 
+	@Operation(summary = "동행글 검색")
+	@GetMapping("/search")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> search(
+		@PageableDefault(
+			sort = {"updatedAt", "createdAt"},
+			direction = Sort.Direction.DESC) Pageable pageable,
+		@RequestParam(value = "keyword") String keyword) {
+		return ResponseEntity.ok(accompanyBoardService.getMatchedBoards(pageable, keyword));
+	}
+
 	@Operation(summary = "동행글 목록 조회")
 	@GetMapping
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
