@@ -4,6 +4,8 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.domain.review.api.dto.CreateReviewRequest;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
+import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponse;
+import com.dnd.accompany.domain.review.api.dto.SimpleReviewResult;
 import com.dnd.accompany.domain.review.entity.Review;
 import com.dnd.accompany.domain.review.infrastructure.ReviewRepository;
 import com.dnd.accompany.domain.user.entity.User;
@@ -14,6 +16,8 @@ import com.dnd.accompany.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -61,8 +65,20 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public void getReviewList(Long userId) {
-        //TODO
+    public List<SimpleReviewResponse> getReviewList(Long userId) {
+        List<SimpleReviewResult> results = reviewRepository.findAllByReceiverId(userId);
+
+        return results.stream()
+                .map(result -> SimpleReviewResponse.builder()
+                        .nickname(result.getNickname())
+                        .profileImageUrl(result.getProfileImageUrl())
+                        .detailContent(result.getDetailContent())
+                        .region(result.getRegion())
+                        .startDate(result.getStartDate())
+                        .endDate(result.getEndDate())
+                        .build()
+                )
+                .toList();
     }
 
     private Review getReview(Long reviewId) {
