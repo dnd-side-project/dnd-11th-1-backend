@@ -1,7 +1,6 @@
 package com.dnd.accompany.domain.review.entity;
 
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
-import com.dnd.accompany.domain.review.entity.enums.TravelPreferenceType;
 import com.dnd.accompany.domain.review.entity.enums.TravelStyleType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +24,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Builder
 @Getter
 @Entity
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "review_travel_style")
 @SQLRestriction("deleted = false")

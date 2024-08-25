@@ -54,6 +54,7 @@ public class ReviewController {
     public ResponseEntity<ReviewDetailsResponse> getReviewList(
             @AuthenticationPrincipal JwtAuthentication user
     ) {
+        //TODO
         reviewService.getReviewList(user.getId());
         return null;
     }

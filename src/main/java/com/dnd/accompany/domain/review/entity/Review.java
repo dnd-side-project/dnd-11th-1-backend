@@ -7,6 +7,7 @@ import com.dnd.accompany.domain.review.entity.enums.RecommendationStatus;
 import com.dnd.accompany.domain.review.entity.enums.SatisfactionLevel;
 import com.dnd.accompany.domain.review.entity.enums.TravelPreferenceType;
 import com.dnd.accompany.domain.review.entity.enums.TravelStyleType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -52,6 +53,9 @@ public class Review extends TimeBaseEntity {
     @Column(nullable = false)
     private Long accompanyBoardId;
 
+    @Column(length = 500)
+    private String detailContent;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SatisfactionLevel satisfactionLevel;
@@ -64,19 +68,16 @@ public class Review extends TimeBaseEntity {
     @Enumerated(EnumType.STRING)
     private CompanionType companionType;
 
-    @OneToMany(fetch = LAZY, mappedBy = "review")
+    @OneToMany(fetch = LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Personality> personalityType = new ArrayList<>();
 
-    @OneToMany(fetch = LAZY, mappedBy = "review")
+    @OneToMany(fetch = LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TravelPreference> travelPreference = new ArrayList<>();
 
-    @OneToMany(fetch = LAZY, mappedBy = "review")
+    @OneToMany(fetch = LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TravelStyle> travelStyle = new ArrayList<>();
 
-    @Column(length = 500)
-    private String detailContent;
-
-    @OneToMany(fetch = LAZY, mappedBy = "review")
+    @OneToMany(fetch = LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImageUrls = new ArrayList<>();
 
     private boolean deleted = Boolean.FALSE;

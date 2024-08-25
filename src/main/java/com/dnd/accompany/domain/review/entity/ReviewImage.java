@@ -1,11 +1,8 @@
 package com.dnd.accompany.domain.review.entity;
 
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
-import com.dnd.accompany.domain.review.entity.enums.PersonalityType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,7 +21,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Builder
 @Getter
 @Entity
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "review_images")
 @SQLRestriction("deleted = false")
