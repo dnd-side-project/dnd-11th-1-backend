@@ -70,13 +70,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 
 	@Override
@@ -110,12 +104,6 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 }

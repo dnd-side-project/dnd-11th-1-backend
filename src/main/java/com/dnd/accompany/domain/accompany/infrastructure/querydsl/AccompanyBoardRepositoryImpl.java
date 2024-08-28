@@ -35,19 +35,6 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	private final JPAQueryFactory queryFactory;
 
-	private BooleanExpression isHost() {
-		return accompanyUser.role.eq(HOST);
-	}
-
-	private BooleanBuilder isRegion(Region region) {
-		BooleanBuilder clause = new BooleanBuilder();
-		if (region != null) {
-			clause.and(accompanyBoard.region.eq(region));
-		}
-
-		return clause;
-	}
-
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region) {
 		List<FindBoardThumbnailsResult> content = queryFactory
@@ -78,13 +65,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 
 	@Override
@@ -117,13 +98,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 
 	@Override
@@ -138,5 +113,18 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.fetchFirst();
 
 		return fetchCount != null;
+	}
+
+	private BooleanExpression isHost() {
+		return accompanyUser.role.eq(HOST);
+	}
+
+	private BooleanBuilder isRegion(Region region) {
+		BooleanBuilder clause = new BooleanBuilder();
+		if (region != null) {
+			clause.and(accompanyBoard.region.eq(region));
+		}
+
+		return clause;
 	}
 }
