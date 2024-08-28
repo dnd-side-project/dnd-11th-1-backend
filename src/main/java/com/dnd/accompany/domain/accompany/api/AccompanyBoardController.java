@@ -18,6 +18,7 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
+import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
@@ -50,13 +51,11 @@ public class AccompanyBoardController {
 	}
 
 	@Operation(summary = "동행글 목록 조회")
-	@GetMapping
+	@PostMapping("/all")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
-		@PageableDefault(
-			sort = {"updatedAt", "createdAt"},
-			direction = Sort.Direction.DESC) Pageable pageable,
+		@RequestBody @Valid PageRequest request,
 		@RequestParam(value = "region", required = false) Region region) {
-		return ResponseEntity.ok(accompanyBoardService.getAllBoards(pageable, region));
+		return ResponseEntity.ok(accompanyBoardService.getAllBoards(request, region));
 	}
 
 	@Operation(summary = "동행글 상세 조회")
@@ -95,10 +94,8 @@ public class AccompanyBoardController {
 	@Operation(summary = "동행 기록 조회")
 	@GetMapping("/records")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
-		@PageableDefault(
-			sort = {"createdAt"},
-			direction = Sort.Direction.DESC) Pageable pageable,
+		@RequestBody @Valid PageRequest request,
 		@AuthenticationPrincipal JwtAuthentication user) {
-		return ResponseEntity.ok(accompanyBoardService.getAllRecords(pageable, user.getId()));
+		return ResponseEntity.ok(accompanyBoardService.getAllRecords(request, user.getId()));
 	}
 }
