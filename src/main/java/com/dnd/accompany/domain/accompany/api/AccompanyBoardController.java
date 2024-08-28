@@ -92,7 +92,7 @@ public class AccompanyBoardController {
 	}
 
 	@Operation(summary = "동행 기록 조회")
-	@GetMapping("/records")
+	@PostMapping("/records")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
 		@RequestBody @Valid PageRequest request,
 		@AuthenticationPrincipal JwtAuthentication user) {

@@ -12,9 +12,11 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.StringTemplate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record PageRequest(
-	String cursor,
-	Integer size
+	@Schema(nullable = true) String cursor,
+	@Schema(nullable = true) Integer size
 ) {
 
 	public PageRequest {
