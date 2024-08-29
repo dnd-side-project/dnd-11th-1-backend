@@ -172,7 +172,6 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 		booleanBuilder.or(isRegionKeyword(keyword));
 		booleanBuilder.or(accompanyBoard.title.contains(keyword));
-		booleanBuilder.or(accompanyBoard.content.contains(keyword));
 		booleanBuilder.or(
 			JPAExpressions.selectOne()
 				.from(accompanyTag)
