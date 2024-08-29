@@ -1,11 +1,9 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult.*;
-import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +58,7 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getAllRecords(PageRequest request, Long userId) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByUserId(request.cursor(), request.size(), userId);
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findRecordsByUserId(request.cursor(), request.size(), userId);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 

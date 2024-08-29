@@ -69,7 +69,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByUserId(String cursor, int size, Long userId) {
+	public Slice<FindBoardThumbnailsResult> findRecordsByUserId(String cursor, int size, Long userId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
