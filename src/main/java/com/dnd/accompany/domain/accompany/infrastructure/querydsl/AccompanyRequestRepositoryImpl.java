@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
+import static com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult.*;
+import static com.dnd.accompany.domain.accompany.api.dto.PageRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
@@ -7,6 +9,7 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.RequestState.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
+import static com.dnd.accompany.domain.user.entity.QUserImage.*;
 
 import java.util.List;
 
@@ -16,6 +19,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyRequestRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -35,7 +39,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Long applicantId) {
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Long applicantId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyRequest.id,
@@ -44,7 +48,13 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
 				user.nickname,
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyRequest.updatedAt,
+					accompanyRequest.id
+				))
+			)
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
@@ -53,19 +63,47 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyRequest.user.id.eq(applicantId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
-			.groupBy(accompanyRequest.id, accompanyBoard.title, accompanyBoard.region,
-				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
-			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1)
+			.where(cursorCondition(cursor, accompanyRequest.updatedAt, accompanyRequest.id))
+			.groupBy(accompanyRequest.id, accompanyBoard.title, accompanyBoard.region, accompanyBoard.startDate,
+				accompanyBoard.endDate, user.nickname)
+			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.id.desc())
+			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
+		return createSlice(size, content);
+	}
 
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
+	@Override
+	public Slice<FindApplicantDetailsResult> findApplicantDetails(String cursor, int size, Long hostId) {
+		List<FindApplicantDetailsResult> content = queryFactory
+			.select(Projections.constructor(FindApplicantDetailsResult.class,
+				accompanyRequest.id,
+				user.id,
+				user.nickname,
+				user.provider,
+				user.profileImageUrl,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", userImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyRequest.updatedAt,
+					accompanyRequest.id
+				))
+			)
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyRequest).on(accompanyRequest.accompanyBoard.id.eq(accompanyBoard.id))
+			.join(user).on(user.id.eq(accompanyRequest.user.id))
+			.leftJoin(userImage).on(userImage.userId.eq(user.id))
+			.where(isHost())
+			.where(accompanyUser.user.id.eq(hostId))
+			.where(accompanyRequest.requestState.eq(HOLDING))
+			.where(cursorCondition(cursor, accompanyRequest.updatedAt, accompanyRequest.id))
+			.groupBy(accompanyRequest.id, user.id, user.nickname, user.provider,
+				user.profileImageUrl)
+			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.id.desc())
+			.limit(size + 1)
+			.fetch();
 
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 }
