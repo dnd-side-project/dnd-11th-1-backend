@@ -5,7 +5,6 @@ import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +49,23 @@ public class AccompanyBoardService {
 				.preferredGender(request.preferredGender())
 				.build()
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public PageResponse<AccompanyBoardThumbnail> getMyBoards(PageRequest request, Long userId) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByHostId(request.cursor(), request.size(), userId);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
+	}
+
+  public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
 	}
 
 	@Transactional(readOnly = true)

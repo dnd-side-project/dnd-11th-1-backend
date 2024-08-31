@@ -143,6 +143,40 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByHostId(String cursor, int size, Long hostId) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyBoard.updatedAt,
+					accompanyBoard.id
+				))
+			)
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(accompanyUser.user.id.eq(hostId))
+			.where(isHost())
+			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
+				accompanyUser.id)
+			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return createSlice(size, content);
+	}
+
+	@Override
 	public boolean isHostOfBoard(Long userId, Long boardId) {
 		Integer fetchCount = queryFactory.selectOne()
 			.from(accompanyUser)
