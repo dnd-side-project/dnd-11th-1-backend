@@ -6,6 +6,7 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
+import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 
@@ -25,6 +26,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,39 @@ import lombok.RequiredArgsConstructor;
 public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
+
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByKeyword(String cursor, int size, String keyword) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyBoard.updatedAt,
+					accompanyBoard.id
+				))
+			)
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(isHost())
+			.where(isContains(keyword))
+			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
+			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return createSlice(size, content);
+	}
 
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region) {
@@ -160,5 +195,27 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		}
 
 		return clause;
+	}
+
+	public BooleanExpression isRegionKeyword(String keyword) {
+		if(from(keyword) == null)
+			return accompanyBoard.region.isNull();
+
+		return accompanyBoard.region.eq(from(keyword));
+	}
+
+	private BooleanBuilder isContains(String keyword) {
+		BooleanBuilder booleanBuilder = new BooleanBuilder();
+		booleanBuilder.or(isRegionKeyword(keyword));
+		booleanBuilder.or(accompanyBoard.title.contains(keyword));
+		booleanBuilder.or(
+			JPAExpressions.selectOne()
+				.from(accompanyTag)
+				.where(accompanyTag.accompanyBoard.id.eq(accompanyBoard.id)
+					.and(accompanyTag.name.contains(keyword)))
+				.exists()
+		);
+
+		return booleanBuilder;
 	}
 }

@@ -50,6 +50,14 @@ public class AccompanyBoardController {
 		return ResponseEntity.ok(accompanyServiceFacade.createBoard(user.getId(), request));
 	}
 
+	@Operation(summary = "동행글 검색")
+	@PostMapping("/search")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> search(
+		@RequestBody @Valid PageRequest request,
+		@RequestParam(value = "keyword") String keyword) {
+		return ResponseEntity.ok(accompanyBoardService.getMatchedBoards(request, keyword));
+	}
+
 	@Operation(summary = "동행글 목록 조회")
 	@PostMapping("/all")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(

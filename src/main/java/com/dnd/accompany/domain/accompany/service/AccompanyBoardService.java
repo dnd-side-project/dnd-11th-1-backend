@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult.*;
+import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
 
@@ -50,6 +51,14 @@ public class AccompanyBoardService {
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getMyBoards(PageRequest request, Long userId) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByHostId(request.cursor(), request.size(), userId);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
+	}
+
+  public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
