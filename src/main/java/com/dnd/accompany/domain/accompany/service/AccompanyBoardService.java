@@ -16,6 +16,7 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindRecordThumbnailsResult;
+
 import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
@@ -54,6 +55,14 @@ public class AccompanyBoardService {
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(), request.size(), region);
+  
+    List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
+  }
+  
+	public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
@@ -68,7 +77,6 @@ public class AccompanyBoardService {
 
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
 	}
-
 
 	/**
 	 * imageUrls의 타입을 String -> List<String>로 변환합니다.

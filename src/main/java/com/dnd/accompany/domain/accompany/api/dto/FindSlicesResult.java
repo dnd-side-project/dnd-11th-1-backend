@@ -20,6 +20,7 @@ public abstract class FindSlicesResult {
 
 	public static <T extends FindSlicesResult> String getLastCursor(List<T> result) {
 		if(result.isEmpty()) return null;
+
 		return result.get(result.size() - 1).getCursor();
 	}
 
