@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyRecordThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
@@ -50,12 +51,28 @@ public class AccompanyBoardController {
 		return ResponseEntity.ok(accompanyServiceFacade.createBoard(user.getId(), request));
 	}
 
+	@Operation(summary = "동행글 검색")
+	@PostMapping("/search")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> search(
+		@RequestBody @Valid PageRequest request,
+		@RequestParam(value = "keyword") String keyword) {
+		return ResponseEntity.ok(accompanyBoardService.getMatchedBoards(request, keyword));
+	}
+
 	@Operation(summary = "동행글 목록 조회")
 	@PostMapping("/all")
 	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAll(
 		@RequestBody @Valid PageRequest request,
 		@RequestParam(value = "region", required = false) Region region) {
 		return ResponseEntity.ok(accompanyBoardService.getAllBoards(request, region));
+	}
+
+	@Operation(summary = "내가 쓴 동행글 목록 조회")
+	@PostMapping("/mine")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readMine(
+		@RequestBody @Valid PageRequest request,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		return ResponseEntity.ok(accompanyBoardService.getMyBoards(request, user.getId()));
 	}
 
 	@Operation(summary = "동행글 상세 조회")
@@ -93,7 +110,7 @@ public class AccompanyBoardController {
 
 	@Operation(summary = "동행 기록 조회")
 	@PostMapping("/records")
-	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
+	public ResponseEntity<PageResponse<AccompanyRecordThumbnail>> readAllRecords(
 		@RequestBody @Valid PageRequest request,
 		@AuthenticationPrincipal JwtAuthentication user) {
 		return ResponseEntity.ok(accompanyBoardService.getAllRecords(request, user.getId()));
