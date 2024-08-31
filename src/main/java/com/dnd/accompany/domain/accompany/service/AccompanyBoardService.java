@@ -76,14 +76,6 @@ public class AccompanyBoardService {
 
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
   }
-  
-	public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
-
-		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
-
-		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
-	}
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyRecordThumbnail> getAllRecords(PageRequest request, Long userId) {
