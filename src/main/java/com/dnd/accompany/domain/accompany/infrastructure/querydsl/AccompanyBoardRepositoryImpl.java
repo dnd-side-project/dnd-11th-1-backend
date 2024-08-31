@@ -5,6 +5,7 @@ import static com.dnd.accompany.domain.accompany.api.dto.PageRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
+import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
