@@ -50,6 +50,8 @@ public class User extends TimeBaseEntity {
 
 	private boolean deleted = false;
 
+	private String reason;
+
 	public static User of(String nickname, String provider, String oauthId, String profileImageUrl) {
 		return User.builder()
 				.nickname(nickname)
@@ -68,5 +70,10 @@ public class User extends TimeBaseEntity {
 
 	public void addEvaluationCount(int count) {
 		this.evaluationCount += count;
+	}
+
+	public void delete(String reason) {
+		this.deleted = true;
+		this.reason = reason;
 	}
 }

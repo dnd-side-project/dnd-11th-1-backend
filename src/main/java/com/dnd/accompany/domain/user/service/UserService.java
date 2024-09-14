@@ -1,10 +1,14 @@
 package com.dnd.accompany.domain.user.service;
 
 import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
+import com.dnd.accompany.domain.auth.dto.DeleteUserRequest;
 import com.dnd.accompany.domain.auth.oauth.dto.OAuthUserInfo;
 import com.dnd.accompany.domain.user.entity.User;
+import com.dnd.accompany.domain.user.entity.UserProfile;
 import com.dnd.accompany.domain.user.infrastructure.UserProfileRepository;
 import com.dnd.accompany.domain.user.infrastructure.UserRepository;
+import com.dnd.accompany.global.common.exception.NotFoundException;
+import com.dnd.accompany.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +39,11 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long userId) {
+    public void delete(Long userId, DeleteUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
         userProfileRepository.deleteById(userId);
-        userRepository.deleteById(userId);
+        user.delete(request.reason());
     }
 }

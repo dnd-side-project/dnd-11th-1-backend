@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.auth.api;
 
 import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
+import com.dnd.accompany.domain.auth.dto.DeleteUserRequest;
 import com.dnd.accompany.domain.auth.dto.Tokens;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 import com.dnd.accompany.domain.auth.oauth.dto.LoginRequest;
@@ -46,10 +47,13 @@ public class AuthController {
 
     @Operation(summary = "회원 탈퇴")
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Long> withdraw(@AuthenticationPrincipal JwtAuthentication user) {
+    public ResponseEntity<Long> withdraw(
+            @AuthenticationPrincipal JwtAuthentication user,
+            @RequestBody DeleteUserRequest deleteUserRequest
+    ) {
         Long userId = user.getId();
         oAuthService.revoke(userId);
-        userService.delete(userId);
+        userService.delete(userId, deleteUserRequest);
 
         return ResponseEntity.ok(userId);
     }
