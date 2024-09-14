@@ -1,8 +1,6 @@
 package com.dnd.accompany.domain.user.entity;
 
-import io.jsonwebtoken.lang.Assert;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
@@ -26,7 +24,6 @@ import static org.springframework.util.Assert.notNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 public class User extends TimeBaseEntity {
 
