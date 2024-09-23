@@ -58,8 +58,19 @@ public class AccompanyRequestController {
 
 	@Operation(summary = "동행 신청 취소")
 	@PostMapping("/{id}")
-	public ResponseEntity<Void> cancel(@PathVariable("id") Long requestId, @AuthenticationPrincipal JwtAuthentication user) {
+	public ResponseEntity<Void> cancel(
+		@PathVariable("id") Long requestId,
+		@AuthenticationPrincipal JwtAuthentication user) {
 		accompanyRequestService.deleteRequest(requestId, user.getId());
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "동행 신청 수락")
+	@PostMapping("/approve/{id}")
+	public ResponseEntity<Void> approve(
+		@PathVariable("id") Long requestId,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		accompanyServiceFacade.approveRequest(requestId, user.getId());
 		return ResponseEntity.ok().build();
 	}
 }
