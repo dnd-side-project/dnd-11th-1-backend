@@ -19,8 +19,6 @@ import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
-import com.dnd.accompany.domain.accompany.entity.enums.RequestState;
-import com.dnd.accompany.domain.accompany.entity.enums.Role;
 import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.user.dto.UserProfileDetailResponse;
 import com.dnd.accompany.domain.user.service.UserProfileService;
@@ -153,5 +151,20 @@ public class AccompanyServiceFacade {
 		accompanyRequest.setRequestState(APPROVED);
 		accompanyUserService.save(applicantId, accompanyBoard, PARTICIPANT);
 		accompanyBoard.addHeadCount();
+	}
+
+	@Transactional
+	public void declineRequest(Long requestId, Long userId) {
+		AccompanyRequest accompanyRequest = accompanyRequestService.getAccompanyRequest(requestId);
+		AccompanyBoard accompanyBoard = accompanyRequest.getAccompanyBoard();
+
+		Long boardId = accompanyBoard.getId();
+		Long hostId = accompanyUserService.getHostIdByAccompanyBoardId(boardId);
+
+		if (hostId != userId) {
+			throw new BadRequestException(ErrorCode.ACCESS_DENIED);
+		}
+
+		accompanyRequest.setRequestState(DECLINED);
 	}
 }

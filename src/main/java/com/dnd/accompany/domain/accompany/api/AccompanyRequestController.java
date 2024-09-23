@@ -73,4 +73,13 @@ public class AccompanyRequestController {
 		accompanyServiceFacade.approveRequest(requestId, user.getId());
 		return ResponseEntity.ok().build();
 	}
+
+	@Operation(summary = "동행 신청 거절")
+	@PostMapping("/decline/{id}")
+    public ResponseEntity<Void> decline(
+        @PathVariable("id") Long requestId,
+        @AuthenticationPrincipal JwtAuthentication user) {
+		accompanyServiceFacade.declineRequest(requestId, user.getId());
+		return ResponseEntity.ok().build();
+	}
 }
