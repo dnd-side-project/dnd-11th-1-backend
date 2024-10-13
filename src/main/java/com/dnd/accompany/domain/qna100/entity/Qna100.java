@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.qna100.entity;
 
+import org.hibernate.annotations.SQLDelete;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "qna100s")
+@SQLDelete(sql = "UPDATE qna100s SET deleted = true WHERE id = ?")
 public class Qna100 {
 
 	@Id
