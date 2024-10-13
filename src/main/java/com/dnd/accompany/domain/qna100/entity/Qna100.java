@@ -32,4 +32,12 @@ public class Qna100 {
 
 	@Column(length = 2000)
 	private String answer;
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
 }
