@@ -36,6 +36,8 @@ public class Qna100 {
 	@Column(length = 2000)
 	private String answer;
 
+	private boolean deleted = false;
+
 	public void setQuestion(String question) {
 		this.question = question;
 	}
