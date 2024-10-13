@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.qna100.entity;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "qna100s")
+@SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE qna100s SET deleted = true WHERE id = ?")
 public class Qna100 extends TimeBaseEntity {
 
