@@ -1,17 +1,21 @@
 package com.dnd.accompany.domain.qna100.service;
 
+import static com.dnd.accompany.domain.qna100.api.dto.FindSlicesResult.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.qna100.api.dto.CreateAndUpdateQnaRequest;
 import com.dnd.accompany.domain.qna100.api.dto.DeleteQnaRequest;
+import com.dnd.accompany.domain.qna100.api.dto.PageRequest;
+import com.dnd.accompany.domain.qna100.api.dto.PageResponse;
+import com.dnd.accompany.domain.qna100.api.dto.QnaThumbnail;
 import com.dnd.accompany.domain.qna100.entity.Qna100;
 import com.dnd.accompany.domain.qna100.exception.Qna100AccessDeniedException;
 import com.dnd.accompany.domain.qna100.exception.Qna100NotFoundException;
@@ -52,10 +56,19 @@ public class QnaService {
 		Qna100 qna = qnaRepository.findFirstByUserId(userId)
 			.orElseThrow(() -> new Qna100NotFoundException(ErrorCode.QNA100_NOT_FOUND));
 
-		if(!userId.equals(qna.getUserId())){
+		if (!userId.equals(qna.getUserId())) {
 			throw new Qna100AccessDeniedException(ErrorCode.QNA100_ACCESS_DENIED);
 		}
 
 		qnaRepository.deleteByIdIn(request.ids());
+	}
+
+	@Transactional(readOnly = true)
+	public PageResponse<QnaThumbnail> getAllQnas(Long userId, PageRequest request) {
+		Slice<QnaThumbnail> sliceResult = qnaRepository.findQnaThumbnails(request.cursor(), request.size(), userId);
+
+		List<QnaThumbnail> qnaThumbnails = sliceResult.getContent();
+
+		return new PageResponse<>(sliceResult.hasNext(), qnaThumbnails, getLastCursor(qnaThumbnails));
 	}
 }

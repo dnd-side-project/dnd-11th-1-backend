@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 import com.dnd.accompany.domain.qna100.api.dto.CreateAndUpdateQnaRequest;
 import com.dnd.accompany.domain.qna100.api.dto.DeleteQnaRequest;
+import com.dnd.accompany.domain.qna100.api.dto.PageRequest;
+import com.dnd.accompany.domain.qna100.api.dto.PageResponse;
+import com.dnd.accompany.domain.qna100.api.dto.QnaThumbnail;
 import com.dnd.accompany.domain.qna100.service.QnaService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,5 +45,13 @@ public class QnaController {
 		@AuthenticationPrincipal JwtAuthentication user) {
 		qnaService.delete(user.getId(), request);
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "백문백답 목록 조회")
+	@PostMapping("/all")
+	public ResponseEntity<PageResponse<QnaThumbnail>> readAll(
+		@RequestBody @Valid PageRequest request,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		return ResponseEntity.ok(qnaService.getAllQnas(user.getId(), request));
 	}
 }
