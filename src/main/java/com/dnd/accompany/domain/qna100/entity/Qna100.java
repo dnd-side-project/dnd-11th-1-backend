@@ -2,6 +2,8 @@ package com.dnd.accompany.domain.qna100.entity;
 
 import org.hibernate.annotations.SQLDelete;
 
+import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "qna100s")
 @SQLDelete(sql = "UPDATE qna100s SET deleted = true WHERE id = ?")
-public class Qna100 {
+public class Qna100 extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
