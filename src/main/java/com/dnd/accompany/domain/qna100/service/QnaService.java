@@ -31,7 +31,7 @@ public class QnaService {
 	private final QnaRepository qnaRepository;
 
 	@Transactional
-	public void saveAndUpdate(Long userId, CreateAndUpdateQnaRequest request) {
+	public void upsert(Long userId, CreateAndUpdateQnaRequest request) {
 		Map<Boolean, List<Qna100>> qnaMap = request.toMap(userId, request.qnas());
 
 		List<Qna100> newQnas = qnaMap.get(true);

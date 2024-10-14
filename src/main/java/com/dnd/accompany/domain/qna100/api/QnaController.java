@@ -34,7 +34,7 @@ public class QnaController {
 	public ResponseEntity<Void> createAndUpdate(
 		@RequestBody @Valid CreateAndUpdateQnaRequest request,
 		@AuthenticationPrincipal JwtAuthentication user) {
-		qnaService.saveAndUpdate(user.getId(), request);
+		qnaService.upsert(user.getId(), request);
 		return ResponseEntity.ok().build();
 	}
 
