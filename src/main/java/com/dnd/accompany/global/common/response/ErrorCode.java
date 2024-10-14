@@ -38,6 +38,10 @@ public enum ErrorCode {
 	// ---- 동행 신청서 ---- //
 	ACCOMPANY_REQUEST_NOT_FOUND(MatripConstant.NOT_FOUND, "ACCOMPANY_REQUEST-001", "동행 신청서를 찾을 수 없습니다."),
 
+	// ---- 백문백답 ---- //
+	QNA100_NOT_FOUND(MatripConstant.NOT_FOUND, "QNA100-001", "백문백답을 찾을 수 없습니다."),
+	QNA100_ACCESS_DENIED(MatripConstant.FORBIDDEN, "QNA100-002", "백문백답 접근 권한이 없습니다."),
+
 	// ---- 이미지 ---- //
 	IMAGE_NOT_EXISTS(MatripConstant.NOT_FOUND, "IMAGE-001", "이미지를 찾을 수 없습니다."),
 	FILE_IO_EXCEPTION(MatripConstant.INTERNAL_SERVER_ERROR, "IMAGE-002", "파일 생성에 실패했습니다."),
