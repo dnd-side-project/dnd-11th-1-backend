@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.qna100.api.dto.CreateAndUpdateQnaRequest;
-import com.dnd.accompany.domain.qna100.api.dto.DeleteQnaRequest;
 import com.dnd.accompany.domain.qna100.api.dto.PageRequest;
 import com.dnd.accompany.domain.qna100.api.dto.PageResponse;
 import com.dnd.accompany.domain.qna100.api.dto.QnaThumbnail;
@@ -52,7 +51,7 @@ public class QnaService {
 	}
 
 	@Transactional
-	public void delete(Long userId, DeleteQnaRequest request) {
+	public void delete(Long userId, List<Long> ids) {
 		Qna100 qna = qnaRepository.findFirstByUserId(userId)
 			.orElseThrow(() -> new Qna100NotFoundException(ErrorCode.QNA100_NOT_FOUND));
 
@@ -60,7 +59,7 @@ public class QnaService {
 			throw new Qna100AccessDeniedException(ErrorCode.QNA100_ACCESS_DENIED);
 		}
 
-		qnaRepository.deleteByIdIn(request.ids());
+		qnaRepository.deleteByIdIn(ids);
 	}
 
 	@Transactional(readOnly = true)
