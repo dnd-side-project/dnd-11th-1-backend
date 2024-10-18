@@ -17,8 +17,8 @@ public record CreateAndUpdateQnaRequest(
 			.map(qna -> Qna100.builder()
 				.id(qna.id())
 				.userId(userId)
-				.question(qna.questions())
-				.answer(qna.answers())
+				.question(qna.question())
+				.answer(qna.answer())
 				.build())
 			.collect(partitioningBy(qna -> qna.getId() == null));
 	}
