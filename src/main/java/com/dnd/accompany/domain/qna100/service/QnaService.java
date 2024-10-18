@@ -1,20 +1,16 @@
 package com.dnd.accompany.domain.qna100.service;
 
-import static com.dnd.accompany.domain.qna100.api.dto.FindSlicesResult.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.qna100.api.dto.CreateAndUpdateQnaRequest;
-import com.dnd.accompany.domain.qna100.api.dto.PageRequest;
-import com.dnd.accompany.domain.qna100.api.dto.PageResponse;
-import com.dnd.accompany.domain.qna100.api.dto.QnaThumbnail;
+import com.dnd.accompany.domain.qna100.api.dto.ReadQnaResponse;
 import com.dnd.accompany.domain.qna100.entity.Qna100;
 import com.dnd.accompany.domain.qna100.exception.Qna100AccessDeniedException;
 import com.dnd.accompany.domain.qna100.exception.Qna100NotFoundException;
@@ -63,11 +59,9 @@ public class QnaService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<QnaThumbnail> getAllQnas(Long userId, PageRequest request) {
-		Slice<QnaThumbnail> sliceResult = qnaRepository.findQnaThumbnails(request.cursor(), request.size(), userId);
+	public ReadQnaResponse getAllQnas(Long userId) {
+		List<Qna100> qnas = qnaRepository.findAllByUserId(userId);
 
-		List<QnaThumbnail> qnaThumbnails = sliceResult.getContent();
-
-		return new PageResponse<>(sliceResult.hasNext(), qnaThumbnails, getLastCursor(qnaThumbnails));
+		return ReadQnaResponse.from(qnas);
 	}
 }
