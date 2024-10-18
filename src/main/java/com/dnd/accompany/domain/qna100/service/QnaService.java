@@ -1,5 +1,6 @@
 package com.dnd.accompany.domain.qna100.service;
 
+import static com.dnd.accompany.domain.qna100.entity.Qna100.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
@@ -63,5 +64,15 @@ public class QnaService {
 		List<Qna100> qnas = qnaRepository.findAllByUserId(userId);
 
 		return ReadQnaResponse.from(qnas);
+	}
+
+	public void init(Long userId){
+		List<Qna100> qnas = List.of(
+            Qna100.from(userId, QUESTION1, ""),
+			Qna100.from(userId, QUESTION2, ""),
+			Qna100.from(userId, QUESTION3, "")
+		);
+
+        qnaRepository.saveAll(qnas);
 	}
 }
