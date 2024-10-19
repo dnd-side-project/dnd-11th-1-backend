@@ -3,6 +3,7 @@ package com.dnd.accompany.domain.user.service;
 import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
 import com.dnd.accompany.domain.auth.dto.DeleteUserRequest;
 import com.dnd.accompany.domain.auth.oauth.dto.OAuthUserInfo;
+import com.dnd.accompany.domain.qna100.service.QnaService;
 import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.entity.UserProfile;
 import com.dnd.accompany.domain.user.infrastructure.UserProfileRepository;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+    private final QnaService qnaService;
 
     @Transactional
     public AuthUserInfo getOrRegister(OAuthUserInfo oauthUserInfo) {
@@ -30,12 +32,16 @@ public class UserService {
 
     @Transactional
     public User registerUser(OAuthUserInfo oauthUserInfo) {
-        return userRepository.save(User.of(
+        User user = userRepository.save(User.of(
                 oauthUserInfo.getNickname(),
                 oauthUserInfo.getProvider(),
                 oauthUserInfo.getOauthId(),
                 oauthUserInfo.getProfileImageUrl()
         ));
+
+        qnaService.init(user.getId());
+
+        return user;
     }
 
     @Transactional
