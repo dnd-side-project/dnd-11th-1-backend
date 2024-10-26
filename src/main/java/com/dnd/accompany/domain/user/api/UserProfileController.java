@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,17 +64,24 @@ public class UserProfileController {
         return ResponseEntity.ok(userId);
     }
 
-    @Operation(summary = "유저 프로필 상세 조회")
+    @Operation(summary = "내 프로필 상세 조회")
     @GetMapping("/details")
     public ResponseEntity<UserProfileDetailResponse> getUserProfileDetails(@AuthenticationPrincipal JwtAuthentication user) {
         UserProfileDetailResponse userProfile = userProfileService.findUserProfileDetails(user.getId());
         return ResponseEntity.ok(userProfile);
     }
 
-    @Operation(summary = "유저 프로필 조회")
+    @Operation(summary = "내 프로필 조회")
     @GetMapping
     public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal JwtAuthentication user) {
         UserProfileResponse userProfile = userProfileService.findUserProfile(user.getId());
+        return ResponseEntity.ok(userProfile);
+    }
+
+    @Operation(summary = "유저 프로필 상세 조회")
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileDetailResponse> getUserProfileDetails(@PathVariable Long userId) {
+        UserProfileDetailResponse userProfile = userProfileService.findUserProfileDetails(userId);
         return ResponseEntity.ok(userProfile);
     }
 }
