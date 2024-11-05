@@ -15,7 +15,8 @@ public class AccompanyRequestDetailInfo {
 	private boolean isReceived;
 
 	@Builder
-	public AccompanyRequestDetailInfo(Long requestId, Long userId, String introduce, String chatLink, boolean isReceived) {
+	public AccompanyRequestDetailInfo(Long requestId, Long userId, String introduce, String chatLink,
+		boolean isReceived) {
 		this.requestId = requestId;
 		this.userId = userId;
 		this.introduce = introduce;

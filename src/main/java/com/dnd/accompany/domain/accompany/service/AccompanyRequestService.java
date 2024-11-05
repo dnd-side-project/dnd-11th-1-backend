@@ -42,6 +42,53 @@ public class AccompanyRequestService {
 	private final AccompanyRequestRepository accompanyRequestRepository;
 	private final UserProfileRepository userProfileRepository;
 
+	/**
+	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
+	 */
+	private static List<ReceivedAccompany> getReceivedAccompanies(List<FindApplicantDetailsResult> results,
+		Map<Long, UserProfile> userProfileMap) {
+		return results.stream()
+			.map(result -> {
+				UserProfile userProfile = userProfileMap.get(result.getUserId());
+
+				return ReceivedAccompany.builder()
+					.requestId(result.getRequestId())
+					.userId(result.getUserId())
+					.nickname(result.getNickname())
+					.provider(result.getProvider())
+					.profileImageUrl(result.getProfileImageUrl())
+					.description(userProfile.getDescription())
+					.gender(userProfile.getGender())
+					.birthYear(userProfile.getBirthYear())
+					.socialMediaUrl(userProfile.getSocialMediaUrl())
+					.grade(userProfile.getGrade())
+					.travelPreferences(userProfile.getTravelPreferences())
+					.travelStyles(userProfile.getTravelStyles())
+					.foodPreferences(userProfile.getFoodPreferences())
+					.userImageUrl(result.getImageUrlsAsList())
+					.build();
+			})
+			.toList();
+	}
+
+	/**
+	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
+	 */
+	private static List<SendedAccompany> getSendedAccompanies(List<FindBoardThumbnailsResult> results) {
+		List<SendedAccompany> sendedAccompanies = results.stream()
+			.map(result -> SendedAccompany.builder()
+				.requestId(result.getRequestId())
+				.title(result.getTitle())
+				.region(result.getRegion())
+				.startDate(result.getStartDate())
+				.endDate(result.getEndDate())
+				.nickname(result.getNickname())
+				.imageUrls(result.getImageUrlsAsList())
+				.build())
+			.toList();
+		return sendedAccompanies;
+	}
+
 	@Transactional
 	public AccompanyRequest getAccompanyRequest(Long requestId) {
 		return accompanyRequestRepository.findById(requestId)
@@ -90,35 +137,6 @@ public class AccompanyRequestService {
 			.collect(Collectors.toMap(UserProfile::getUserId, userProfile -> userProfile));
 	}
 
-	/**
-	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
-	 */
-	private static List<ReceivedAccompany> getReceivedAccompanies(List<FindApplicantDetailsResult> results,
-		Map<Long, UserProfile> userProfileMap) {
-		return results.stream()
-			.map(result -> {
-				UserProfile userProfile = userProfileMap.get(result.getUserId());
-
-				return ReceivedAccompany.builder()
-					.requestId(result.getRequestId())
-					.userId(result.getUserId())
-					.nickname(result.getNickname())
-					.provider(result.getProvider())
-					.profileImageUrl(result.getProfileImageUrl())
-					.description(userProfile.getDescription())
-					.gender(userProfile.getGender())
-					.birthYear(userProfile.getBirthYear())
-					.socialMediaUrl(userProfile.getSocialMediaUrl())
-					.grade(userProfile.getGrade())
-					.travelPreferences(userProfile.getTravelPreferences())
-					.travelStyles(userProfile.getTravelStyles())
-					.foodPreferences(userProfile.getFoodPreferences())
-					.userImageUrl(result.getImageUrlsAsList())
-					.build();
-			})
-			.toList();
-	}
-
 	@Transactional(readOnly = true)
 	public PageResponse<SendedAccompany> getAllSendedAccompanies(PageRequest request, Long applicantId) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyRequestRepository.findBoardThumbnails(request.cursor(),
@@ -127,24 +145,6 @@ public class AccompanyRequestService {
 		List<SendedAccompany> sendedAccompanies = getSendedAccompanies(sliceResult.getContent());
 
 		return new PageResponse<>(sliceResult.hasNext(), sendedAccompanies, getLastCursor(sliceResult.getContent()));
-	}
-
-	/**
-	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
-	 */
-	private static List<SendedAccompany> getSendedAccompanies(List<FindBoardThumbnailsResult> results) {
-		List<SendedAccompany> sendedAccompanies = results.stream()
-			.map(result -> SendedAccompany.builder()
-				.requestId(result.getRequestId())
-				.title(result.getTitle())
-				.region(result.getRegion())
-				.startDate(result.getStartDate())
-				.endDate(result.getEndDate())
-				.nickname(result.getNickname())
-				.imageUrls(result.getImageUrlsAsList())
-				.build())
-			.toList();
-		return sendedAccompanies;
 	}
 
 	@Transactional

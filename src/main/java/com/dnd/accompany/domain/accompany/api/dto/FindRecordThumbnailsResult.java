@@ -8,15 +8,12 @@ import java.util.List;
 
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class FindRecordThumbnailsResult extends FindSlicesResult{
+public class FindRecordThumbnailsResult extends FindSlicesResult {
 	private final Long requestId;
 	private final String title;
 	private final Region region;

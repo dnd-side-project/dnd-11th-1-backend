@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import com.dnd.accompany.domain.accompany.entity.AccompanyRequest;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyRequestRepositoryCustom;
 
-public interface AccompanyRequestRepository extends JpaRepository<AccompanyRequest, Long>, AccompanyRequestRepositoryCustom {
+public interface AccompanyRequestRepository
+	extends JpaRepository<AccompanyRequest, Long>, AccompanyRequestRepositoryCustom {
 	void deleteByAccompanyBoardId(Long boardId);
 
 	@Query("SELECT r FROM AccompanyRequest r WHERE r.accompanyBoard.id = :boardId AND r.user.id = :userId")

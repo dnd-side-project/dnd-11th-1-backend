@@ -4,27 +4,21 @@ import static com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult.*;
 import static com.dnd.accompany.domain.accompany.api.dto.PageRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
-import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
-import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
+import static com.dnd.accompany.domain.accompany.entity.enums.Region.from;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.review.entity.QReview.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 import static java.time.LocalDateTime.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindRecordThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
@@ -109,7 +103,8 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region, boolean started) {
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region,
+		boolean started) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -240,7 +235,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	public BooleanExpression isRegionKeyword(String keyword) {
-		if(from(keyword) == null)
+		if (from(keyword) == null)
 			return accompanyBoard.region.isNull();
 
 		return accompanyBoard.region.eq(from(keyword));
@@ -264,7 +259,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	private BooleanBuilder isStarted(boolean started) {
 		BooleanBuilder clause = new BooleanBuilder();
 
-		if(started){
+		if (started) {
 			clause.and(accompanyBoard.startDate.loe(now()));
 			return clause;
 		}

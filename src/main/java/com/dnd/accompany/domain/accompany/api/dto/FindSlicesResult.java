@@ -9,7 +9,6 @@ import org.springframework.data.domain.SliceImpl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -19,7 +18,8 @@ public abstract class FindSlicesResult {
 	private final String cursor;
 
 	public static <T extends FindSlicesResult> String getLastCursor(List<T> result) {
-		if(result.isEmpty()) return null;
+		if (result.isEmpty())
+			return null;
 
 		return result.get(result.size() - 1).getCursor();
 	}
