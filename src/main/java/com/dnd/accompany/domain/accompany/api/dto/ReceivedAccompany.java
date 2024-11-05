@@ -32,14 +32,15 @@ public class ReceivedAccompany {
 	private List<String> userImageUrl;
 
 	@Builder
-	public ReceivedAccompany(Long requestId, Long userId, String nickname, String provider, String profileImageUrl, String description,
+	public ReceivedAccompany(Long requestId, Long userId, String nickname, String provider, String profileImageUrl,
+		String description,
 		Gender gender, int birthYear, String socialMediaUrl, Grade grade, List<TravelPreference> travelPreferences,
 		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences, List<String> userImageUrl) {
 		this.requestId = requestId;
 		this.userId = userId;
-        this.nickname = nickname;
-        this.provider = provider;
-        this.profileImageUrl = profileImageUrl;
+		this.nickname = nickname;
+		this.provider = provider;
+		this.profileImageUrl = profileImageUrl;
 		this.description = description;
 		this.gender = gender;
 		this.birthYear = birthYear;

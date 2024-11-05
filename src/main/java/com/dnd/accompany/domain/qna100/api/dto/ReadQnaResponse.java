@@ -10,9 +10,9 @@ public record ReadQnaResponse(
 	List<Qna> qnas
 ) {
 
-	public static ReadQnaResponse from(List<Qna100> qna100s){
+	public static ReadQnaResponse from(List<Qna100> qna100s) {
 		return new ReadQnaResponse(qna100s.stream()
-            .map(Qna::from)
-            .collect(toList()));
+			.map(Qna::from)
+			.collect(toList()));
 	}
 }

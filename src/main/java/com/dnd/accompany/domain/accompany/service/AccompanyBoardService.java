@@ -1,7 +1,6 @@
 package com.dnd.accompany.domain.accompany.service;
 
 import static com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult.*;
-import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindRecordThumbnailsResult;
-
 import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
@@ -53,7 +51,8 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getMyBoards(PageRequest request, Long userId) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByHostId(request.cursor(), request.size(), userId);
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByHostId(
+			request.cursor(), request.size(), userId);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
@@ -61,8 +60,9 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-  public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
+	public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(
+			request.cursor(), request.size(), keyword);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
@@ -71,16 +71,28 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(), request.size(), region);
-  
-    List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(),
+			request.size(), region);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
-  }
+	}
+
+	@Transactional(readOnly = true)
+	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region, boolean started) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(),
+			request.size(), region, started);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
+	}
 
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyRecordThumbnail> getAllRecords(PageRequest request, Long userId) {
-		Slice<FindRecordThumbnailsResult> sliceResult = accompanyBoardRepository.findRecordThumbnails(request.cursor(), request.size(), userId);
+		Slice<FindRecordThumbnailsResult> sliceResult = accompanyBoardRepository.findRecordThumbnails(request.cursor(),
+			request.size(), userId);
 
 		List<AccompanyRecordThumbnail> thumbnails = getRecordThumbnails(sliceResult.getContent());
 
@@ -122,29 +134,29 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public AccompanyBoard getAccompanyBoard(Long boardId){
+	public AccompanyBoard getAccompanyBoard(Long boardId) {
 		return accompanyBoardRepository.findByIdWithCategories(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
 	@Transactional(readOnly = true)
-	public boolean isHostOfBoard(Long userId, Long boardId){
+	public boolean isHostOfBoard(Long userId, Long boardId) {
 		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
 	}
 
 	@Transactional(readOnly = true)
-	public AccompanyBoard getById(Long boardId){
+	public AccompanyBoard getById(Long boardId) {
 		return accompanyBoardRepository.findById(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
 	@Transactional
-	public void deleteByBoardId(Long boardId){
+	public void deleteByBoardId(Long boardId) {
 		accompanyBoardRepository.deleteById(boardId);
 	}
 
 	@Transactional(readOnly = true)
-	public FindBoardThumbnailResult getBoardThumbnail(Long boardId){
+	public FindBoardThumbnailResult getBoardThumbnail(Long boardId) {
 		return accompanyBoardRepository.findBoardThumbnail(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}

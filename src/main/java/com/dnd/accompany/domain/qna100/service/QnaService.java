@@ -66,13 +66,13 @@ public class QnaService {
 		return ReadQnaResponse.from(qnas);
 	}
 
-	public void init(Long userId){
+	public void init(Long userId) {
 		List<Qna100> qnas = List.of(
-            Qna100.from(userId, QUESTION1, ""),
+			Qna100.from(userId, QUESTION1, ""),
 			Qna100.from(userId, QUESTION2, ""),
 			Qna100.from(userId, QUESTION3, "")
 		);
 
-        qnaRepository.saveAll(qnas);
+		qnaRepository.saveAll(qnas);
 	}
 }

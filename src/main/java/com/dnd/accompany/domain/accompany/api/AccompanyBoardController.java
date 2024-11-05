@@ -1,11 +1,7 @@
 package com.dnd.accompany.domain.accompany.api;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +61,15 @@ public class AccompanyBoardController {
 		@RequestBody @Valid PageRequest request,
 		@RequestParam(value = "region", required = false) Region region) {
 		return ResponseEntity.ok(accompanyBoardService.getAllBoards(request, region));
+	}
+
+	@Operation(summary = "동행 시작 여부에 따른 동행글 목록 조회")
+	@PostMapping("/all/by-started")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllNotStarted(
+		@RequestBody @Valid PageRequest request,
+		@RequestParam(value = "region", required = false) Region region,
+		@RequestParam(value = "started") boolean started) {
+		return ResponseEntity.ok(accompanyBoardService.getAllBoards(request, region, started));
 	}
 
 	@Operation(summary = "내가 쓴 동행글 목록 조회")

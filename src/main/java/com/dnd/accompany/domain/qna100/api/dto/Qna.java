@@ -10,7 +10,7 @@ public record Qna(
 	@Size(max = 2000) String answer
 ) {
 
-	public static Qna from(Qna100 qna100){
+	public static Qna from(Qna100 qna100) {
 		return new Qna(qna100.getId(), qna100.getQuestion(), qna100.getAnswer());
 	}
 }

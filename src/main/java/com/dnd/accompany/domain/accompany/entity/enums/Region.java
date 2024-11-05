@@ -16,10 +16,6 @@ public enum Region {
 		this.description = description;
 	}
 
-	public String description() {
-		return description;
-	}
-
 	public static Region from(String keyword) {
 		for (Region region : Region.values()) {
 			if (region.description().contains(keyword)) {
@@ -27,5 +23,9 @@ public enum Region {
 			}
 		}
 		return null;
+	}
+
+	public String description() {
+		return description;
 	}
 }

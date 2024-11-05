@@ -23,7 +23,7 @@ public class SendedAccompany {
 
 	@Builder
 	public SendedAccompany(Long requestId, String title, Region region, LocalDateTime startDate, LocalDateTime endDate,
-        String nickname, List<String> imageUrls) {
+		String nickname, List<String> imageUrls) {
 		this.requestId = requestId;
 		this.title = title;
 		this.region = region;

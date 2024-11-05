@@ -12,6 +12,8 @@ import com.dnd.accompany.domain.qna100.infrastructure.querydsl.interfaces.QnaRep
 @Repository
 public interface QnaRepository extends JpaRepository<Qna100, Long>, QnaRepositoryCustom {
 	Optional<Qna100> findFirstByUserId(Long userId);
+
 	void deleteByIdIn(List<Long> ids);
+
 	List<Qna100> findAllByUserId(Long userId);
 }

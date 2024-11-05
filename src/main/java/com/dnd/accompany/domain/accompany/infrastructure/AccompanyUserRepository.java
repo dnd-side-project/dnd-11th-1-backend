@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
-import com.dnd.accompany.domain.accompany.entity.enums.Role;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyUserRepositoryCustom;
 
 public interface AccompanyUserRepository extends JpaRepository<AccompanyUser, Long>, AccompanyUserRepositoryCustom {
