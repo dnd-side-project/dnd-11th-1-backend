@@ -11,7 +11,9 @@ import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.review.entity.QReview.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
+import static java.time.LocalDateTime.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -96,6 +98,40 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
 			.where(isHost())
 			.where(isRegion(region))
+			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
+			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return createSlice(size, content);
+	}
+
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region, boolean started) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyBoard.updatedAt,
+					accompanyBoard.id
+				))
+			)
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(isHost())
+			.where(isRegion(region))
+			.where(isStarted(started))
 			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
@@ -223,5 +259,17 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		);
 
 		return booleanBuilder;
+	}
+
+	private BooleanBuilder isStarted(boolean started) {
+		BooleanBuilder clause = new BooleanBuilder();
+
+		if(started){
+			clause.and(accompanyBoard.startDate.loe(now()));
+			return clause;
+		}
+
+		clause.and(accompanyBoard.startDate.gt(now()));
+		return clause;
 	}
 }

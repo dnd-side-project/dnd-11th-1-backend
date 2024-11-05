@@ -10,6 +10,8 @@ public interface AccompanyBoardRepositoryCustom {
   
 	Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region);
 
+	Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region, boolean started);
+
 	Slice<FindRecordThumbnailsResult> findRecordThumbnails(String cursor, int size, Long userId);
 
 	Slice<FindBoardThumbnailsResult> findBoardThumbnailsByHostId(String cursor, int size, Long userId);
