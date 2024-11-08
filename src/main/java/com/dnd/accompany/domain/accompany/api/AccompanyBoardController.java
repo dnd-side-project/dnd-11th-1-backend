@@ -65,7 +65,7 @@ public class AccompanyBoardController {
 
 	@Operation(summary = "동행 모집중 여부, 동행 시작 여부에 따른 동행글 목록 조회")
 	@PostMapping("/all/by-condition")
-	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllNotStarted(
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllByCondition(
 		@RequestBody @Valid PageRequest request,
 		@RequestParam(value = "region", required = false) Region region,
 		@RequestParam(value = "started") boolean started,
