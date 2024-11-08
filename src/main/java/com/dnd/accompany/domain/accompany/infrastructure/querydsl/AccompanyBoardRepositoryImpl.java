@@ -6,6 +6,7 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
+import static com.dnd.accompany.domain.accompany.entity.enums.BoardStatus.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Region.from;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.review.entity.QReview.*;
@@ -104,7 +105,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Region region,
-		boolean started) {
+		boolean started, boolean recruited) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -127,6 +128,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.where(isHost())
 			.where(isRegion(region))
 			.where(isStarted(started))
+			.where(isRecruited(recruited))
 			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
@@ -265,6 +267,18 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		}
 
 		clause.and(accompanyBoard.startDate.gt(now()));
+		return clause;
+	}
+
+	private BooleanBuilder isRecruited(boolean recruited) {
+		BooleanBuilder clause = new BooleanBuilder();
+
+		if (recruited) {
+			clause.and(accompanyBoard.boardStatus.eq(RECRUITMENT_COMPLETED));
+			return clause;
+		}
+
+		clause.and(accompanyBoard.boardStatus.eq(RECRUITING));
 		return clause;
 	}
 }
