@@ -80,9 +80,9 @@ public class AccompanyBoardService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region, boolean started) {
+	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region, boolean started, boolean recruited) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(),
-			request.size(), region, started);
+			request.size(), region, started, recruited);
 
 		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
