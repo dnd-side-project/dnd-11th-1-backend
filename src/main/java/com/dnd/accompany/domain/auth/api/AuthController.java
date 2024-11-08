@@ -46,7 +46,7 @@ public class AuthController {
     }
 
     @Operation(summary = "회원 탈퇴")
-    @DeleteMapping("/withdraw")
+    @PostMapping("/withdraw")
     public ResponseEntity<Long> withdraw(
             @AuthenticationPrincipal JwtAuthentication user,
             @RequestBody DeleteUserRequest deleteUserRequest
