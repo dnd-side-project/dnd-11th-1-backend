@@ -49,7 +49,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        userProfileRepository.deleteById(userId);
+        UserProfile userProfile = userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PROFILE_NOT_FOUND));
+
+        userProfile.delete();
         user.delete(request.reason());
     }
 }

@@ -102,4 +102,8 @@ public class UserProfile {
       this.foodPreferences = foodPreferences;
       this.socialMediaUrl = socialMediaUrl;
   }
+
+  public void delete() {
+    this.deleted = true;
+  }
 }
